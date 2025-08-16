@@ -50,24 +50,29 @@ interface Quiz {
 export default function Dashboard() {
   const { user, isLoading: userLoading, isAuthenticated } = useAuth();
 
+  // Fetch dashboard data
   const { data: news = [], isLoading: newsLoading } = useQuery<NewsItem[]>({
     queryKey: ["/api/news"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: false,
   });
 
   const { data: events = [], isLoading: eventsLoading } = useQuery<Event[]>({
     queryKey: ["/api/events"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: false,
   });
 
   const { data: faculty = [], isLoading: facultyLoading } = useQuery<FacultyMember[]>({
     queryKey: ["/api/faculty"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: false,
   });
 
   const { data: quizzes = [], isLoading: quizzesLoading } = useQuery<Quiz[]>({
     queryKey: ["/api/quizzes"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: false,
   });
 
   const recentNews = news.slice(0, 3);
