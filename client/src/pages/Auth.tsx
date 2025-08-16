@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { GraduationCap, Users, BookOpen, Calendar, MessageSquare, Shield } from "lucide-react";
+import { GraduationCap, Users, BookOpen, Calendar, MessageSquare, Shield, Eye, EyeOff } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -14,6 +14,21 @@ export default function Auth() {
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+
+  const [loginForm, setLoginForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [registerForm, setRegisterForm] = useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    username: "",
+  });
 
   // Redirect if already authenticated
   if (isAuthenticated) {
@@ -66,7 +81,7 @@ export default function Auth() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    
+
     loginMutation.mutate({ email, password });
   };
 
@@ -130,7 +145,7 @@ export default function Auth() {
                     <TabsTrigger value="login">Sign In</TabsTrigger>
                     <TabsTrigger value="register">Sign Up</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="login">
                     <form onSubmit={handleLogin} className="space-y-4">
                       <div className="space-y-2">
@@ -145,15 +160,29 @@ export default function Auth() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                          id="password"
-                          name="password"
-                          type="password"
-                          placeholder="Enter your password"
-                          required
-                          data-testid="input-password"
-                        />
+                        <Label htmlFor="loginPassword">Password</Label>
+                        <div className="relative">
+                          <Input
+                            id="loginPassword"
+                            type={showLoginPassword ? "text" : "password"}
+                            value={loginForm.password}
+                            onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
+                            required
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowLoginPassword(!showLoginPassword)}
+                          >
+                            {showLoginPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
                       </div>
                       <Button
                         type="submit"
@@ -165,7 +194,7 @@ export default function Auth() {
                       </Button>
                     </form>
                   </TabsContent>
-                  
+
                   <TabsContent value="register">
                     <form onSubmit={handleRegister} className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
@@ -215,15 +244,29 @@ export default function Auth() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                          id="password"
-                          name="password"
-                          type="password"
-                          placeholder="Create a password"
-                          required
-                          data-testid="input-register-password"
-                        />
+                        <Label htmlFor="registerPassword">Password</Label>
+                        <div className="relative">
+                          <Input
+                            id="registerPassword"
+                            type={showRegisterPassword ? "text" : "password"}
+                            value={registerForm.password}
+                            onChange={(e) => setRegisterForm(prev => ({ ...prev, password: e.target.value }))}
+                            required
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                          >
+                            {showRegisterPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -260,26 +303,26 @@ export default function Auth() {
               <p className="text-lg text-gray-600 mb-8">
                 Access courses, connect with faculty, participate in discussions, and manage your academic journey at LAUTECH.
               </p>
-              
+
               <div className="grid grid-cols-2 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
                   <Users className="h-8 w-8 text-lautech-blue mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">Faculty Directory</h3>
                   <p className="text-sm text-gray-600">Connect with professors and academic staff</p>
                 </div>
-                
+
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
                   <BookOpen className="h-8 w-8 text-lautech-blue mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">Course Materials</h3>
                   <p className="text-sm text-gray-600">Access quizzes, assignments, and resources</p>
                 </div>
-                
+
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
                   <Calendar className="h-8 w-8 text-lautech-blue mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">Events & News</h3>
                   <p className="text-sm text-gray-600">Stay updated with campus activities</p>
                 </div>
-                
+
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
                   <MessageSquare className="h-8 w-8 text-lautech-blue mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2">AI Assistant</h3>

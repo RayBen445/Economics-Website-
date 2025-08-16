@@ -1,13 +1,33 @@
 import { storage } from "./storage";
+import { scrypt, randomBytes } from "crypto";
+import { promisify } from "util";
+
+const scryptAsync = promisify(scrypt);
+
+async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${buf.toString("hex")}.${salt}`;
+}
 
 export async function initializeMainAdmin() {
   try {
     // Check if main admin already exists
-    const existingAdmin = await storage.getUserByEmail("oladoyeheritage445@gmail.com");
+    let existingAdmin = await storage.getUserByEmail("oladoyeheritage445@gmail.com");
     
     if (!existingAdmin) {
-      console.log("Main admin not found. Will be created on first login.");
-      return;
+      console.log("Main admin not found. Creating main admin account...");
+      const hashedPassword = await hashPassword("admin123");
+      existingAdmin = await storage.createUser({
+        email: "oladoyeheritage445@gmail.com",
+        password: hashedPassword,
+        firstName: "Heritage",
+        lastName: "Admin",
+        username: "heritage_admin",
+        isAdmin: true,
+        adminLevel: 2,
+      });
+      console.log("Main admin account created successfully");
     }
 
     // Ensure main admin has proper permissions

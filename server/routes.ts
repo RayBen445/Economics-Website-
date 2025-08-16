@@ -229,6 +229,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/admin/ban-user', requireAdmin, async (req: any, res) => {
+    try {
+      const { targetUserId, reason, duration } = req.body;
+      await storage.banUser(targetUserId, reason, duration);
+      res.json({ message: "User banned successfully" });
+    } catch (error) {
+      console.error("Error banning user:", error);
+      res.status(500).json({ message: "Failed to ban user" });
+    }
+  });
+
+  app.get('/api/admin/reports', requireAdmin, async (req: any, res) => {
+    try {
+      const reports = await storage.getReports();
+      res.json(reports);
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+      res.status(500).json({ message: "Failed to fetch reports" });
+    }
+  });
+
   // Site settings routes
   app.get('/api/site-settings', async (req, res) => {
     try {

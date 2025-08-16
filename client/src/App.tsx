@@ -12,6 +12,7 @@ import Events from "@/pages/Events";
 import AdminPanel from "@/pages/AdminPanel";
 import Profile from "@/pages/Profile";
 import Quizzes from "@/pages/Quizzes";
+import AIChat from "@/pages/AIChat";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -36,6 +37,7 @@ function Router() {
           <Route path="/faculty" component={Faculty} />
           <Route path="/events" component={Events} />
           <Route path="/quizzes" component={Quizzes} />
+          <Route path="/ai-chat" component={AIChat} />
           <Route path="/admin" component={AdminPanel} />
           <Route path="/profile" component={Profile} />
         </>

@@ -23,6 +23,7 @@ import {
   Shield,
   LogOut
 } from "lucide-react";
+import Link from "next/link";
 
 export default function Navigation() {
   const { user } = useAuth();
@@ -49,7 +50,7 @@ export default function Navigation() {
               </div>
             </div>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-8">
             <Button
               variant="ghost"
@@ -83,6 +84,12 @@ export default function Navigation() {
               <Users className="mr-2 h-4 w-4" />
               Faculty
             </Button>
+            <Link href="/quizzes" className="text-gray-700 hover:text-lautech-blue">
+              Quizzes
+            </Link>
+            <Link href="/ai-chat" className="text-gray-700 hover:text-lautech-blue">
+              AI Chat
+            </Link>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -97,7 +104,7 @@ export default function Navigation() {
                 </Badge>
               </Button>
             </div>
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center space-x-3 hover:bg-gray-50">

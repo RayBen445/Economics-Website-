@@ -6,6 +6,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { Bell, BookOpen, Calendar, MessageSquare, Users, Settings, TrendingUp, GraduationCap, Bot, FileText, Trophy, Shield } from "lucide-react";
+import TelegramSupport from "@/components/TelegramSupport";
+
 
 interface User {
   id: string;
@@ -46,7 +48,7 @@ interface Quiz {
 }
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, isLoading: userLoading, isAuthenticated } = useAuth();
 
   const { data: news = [], isLoading: newsLoading } = useQuery<NewsItem[]>({
     queryKey: ["/api/news"],
@@ -88,7 +90,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-700">Welcome, {(user as User)?.firstName || (user as User)?.username || 'User'}</span>
@@ -171,8 +173,8 @@ export default function Dashboard() {
               <h3 className="font-semibold text-gray-900 mb-1">AI Assistant</h3>
               <p className="text-sm text-gray-600">Get academic help</p>
               <div className="mt-2">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   className="bg-orange-600 hover:bg-orange-700 text-white"
                   data-testid="button-ai-chat"
                 >

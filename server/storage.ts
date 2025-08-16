@@ -66,94 +66,94 @@ export interface IStorage {
   unbanUser(id: string): Promise<void>;
   promoteToAdmin(id: string, adminLevel: number): Promise<void>;
   getAllUsers(): Promise<User[]>;
-  
+
   // Faculty operations
   getFaculty(): Promise<Faculty[]>;
   searchFaculty(query: string): Promise<Faculty[]>;
   createFaculty(faculty: InsertFaculty): Promise<Faculty>;
   updateFaculty(id: number, updates: Partial<Faculty>): Promise<Faculty | undefined>;
   deleteFaculty(id: number): Promise<void>;
-  
+
   // News operations
   getNews(): Promise<News[]>;
   getPublishedNews(): Promise<News[]>;
   createNews(news: InsertNews): Promise<News>;
   updateNews(id: number, updates: Partial<News>): Promise<News | undefined>;
   deleteNews(id: number): Promise<void>;
-  
+
   // Event operations
   getEvents(): Promise<Event[]>;
   getUpcomingEvents(): Promise<Event[]>;
   createEvent(event: InsertEvent): Promise<Event>;
   updateEvent(id: number, updates: Partial<Event>): Promise<Event | undefined>;
   deleteEvent(id: number): Promise<void>;
-  
+
   // Chat operations
   getChatChannels(): Promise<ChatChannel[]>;
   createChatChannel(channel: InsertChatChannel): Promise<ChatChannel>;
   getChatMessages(channelId: number, limit?: number): Promise<ChatMessage[]>;
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
-  
+
   // Document operations
   getDocuments(): Promise<Document[]>;
   createDocument(document: InsertDocument): Promise<Document>;
   updateDocumentDownloadCount(id: number): Promise<void>;
   deleteDocument(id: number): Promise<void>;
-  
+
   // Report operations
   getReports(): Promise<Report[]>;
   createReport(report: InsertReport): Promise<Report>;
   updateReportStatus(id: number, status: string, adminNotes?: string): Promise<void>;
-  
+
   // Site settings
   getSiteSettings(): Promise<SiteSettings | undefined>;
   updateSiteSettings(settings: Partial<SiteSettings>): Promise<SiteSettings>;
-  
+
   // Admin operations
   getAdmins(): Promise<User[]>;
   promoteToAdmin(userId: string, level: number): Promise<void>;
   removeAdminRights(userId: string): Promise<void>;
-  
+
   // Motivation quotes
   getMotivationQuotes(): Promise<MotivationQuote[]>;
   getRandomQuote(): Promise<MotivationQuote | undefined>;
   createMotivationQuote(quote: InsertMotivationQuote): Promise<MotivationQuote>;
   updateMotivationQuote(id: number, updates: Partial<MotivationQuote>): Promise<MotivationQuote | undefined>;
   deleteMotivationQuote(id: number): Promise<void>;
-  
+
   // Private messages
   getPrivateMessages(userId: string): Promise<PrivateMessage[]>;
   getConversation(user1Id: string, user2Id: string): Promise<PrivateMessage[]>;
   sendPrivateMessage(message: InsertPrivateMessage): Promise<PrivateMessage>;
   markMessageAsRead(messageId: number): Promise<void>;
-  
+
   // Event comments
   getEventComments(eventId: number): Promise<EventComment[]>;
   createEventComment(comment: InsertEventComment): Promise<EventComment>;
   deleteEventComment(id: number): Promise<void>;
-  
+
   // Quiz system
   getQuizzes(): Promise<Quiz[]>;
   getQuiz(id: number): Promise<Quiz | undefined>;
   createQuiz(quiz: InsertQuiz): Promise<Quiz>;
   updateQuiz(id: number, updates: Partial<Quiz>): Promise<Quiz | undefined>;
   deleteQuiz(id: number): Promise<void>;
-  
+
   getQuizQuestions(quizId: number): Promise<QuizQuestion[]>;
   createQuizQuestion(question: InsertQuizQuestion): Promise<QuizQuestion>;
   updateQuizQuestion(id: number, updates: Partial<QuizQuestion>): Promise<QuizQuestion | undefined>;
   deleteQuizQuestion(id: number): Promise<void>;
-  
+
   getQuizAttempts(quizId: number): Promise<QuizAttempt[]>;
   getUserQuizAttempts(userId: string): Promise<QuizAttempt[]>;
   createQuizAttempt(attempt: InsertQuizAttempt): Promise<QuizAttempt>;
-  
+
   // Contact details
   getContactDetails(): Promise<ContactDetail[]>;
   createContactDetail(contact: InsertContactDetail): Promise<ContactDetail>;
   updateContactDetail(id: number, updates: Partial<ContactDetail>): Promise<ContactDetail | undefined>;
   deleteContactDetail(id: number): Promise<void>;
-  
+
   // Chat history for AI conversations
   getChatHistory(userId: string, sessionId?: string): Promise<ChatHistoryEntry[]>;
   saveChatHistory(history: InsertChatHistoryEntry): Promise<ChatHistoryEntry>;
@@ -476,9 +476,9 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(motivationQuotes)
       .where(eq(motivationQuotes.isActive, true));
-    
+
     if (quotes.length === 0) return undefined;
-    
+
     const randomIndex = Math.floor(Math.random() * quotes.length);
     return quotes[randomIndex];
   }
