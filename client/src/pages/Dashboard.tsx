@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import { getQueryFn } from "@/lib/queryClient";
 import { Bell, BookOpen, Calendar, MessageSquare, Users, Settings, TrendingUp, GraduationCap, Bot, FileText, Trophy, Shield } from "lucide-react";
 import TelegramSupport from "@/components/TelegramSupport";
 
@@ -53,25 +52,33 @@ export default function Dashboard() {
   // Fetch dashboard data
   const { data: news = [], isLoading: newsLoading } = useQuery<NewsItem[]>({
     queryKey: ["/api/news"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    queryFn: () => fetch('/api/news', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : [])
+      .catch(() => []),
     retry: false,
   });
 
   const { data: events = [], isLoading: eventsLoading } = useQuery<Event[]>({
     queryKey: ["/api/events"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    queryFn: () => fetch('/api/events', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : [])
+      .catch(() => []),
     retry: false,
   });
 
   const { data: faculty = [], isLoading: facultyLoading } = useQuery<FacultyMember[]>({
     queryKey: ["/api/faculty"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    queryFn: () => fetch('/api/faculty', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : [])
+      .catch(() => []),
     retry: false,
   });
 
   const { data: quizzes = [], isLoading: quizzesLoading } = useQuery<Quiz[]>({
     queryKey: ["/api/quizzes"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    queryFn: () => fetch('/api/quizzes', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : [])
+      .catch(() => []),
     retry: false,
   });
 
