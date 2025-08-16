@@ -1,309 +1,329 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { Trophy, Clock, Plus, Play, CheckCircle, XCircle } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import { apiRequest } from "@/lib/queryClient";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
+import { BookOpen, Clock, Trophy, Plus, Eye, Users } from "lucide-react";
 
-export function Quizzes() {
+interface Quiz {
+  id: number;
+  title: string;
+  description: string;
+  timeLimit: number;
+  totalQuestions: number;
+  createdAt: string;
+  isActive: boolean;
+}
+
+export default function Quizzes() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<{[key: number]: string}>({});
-  const [quizStarted, setQuizStarted] = useState(false);
-  const [quizCompleted, setQuizCompleted] = useState(false);
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-  const { data: quizzes = [] } = useQuery({
-    queryKey: ['/api/quizzes'],
-    enabled: !!user,
+  const { data: quizzes, isLoading } = useQuery<Quiz[]>({
+    queryKey: ["/api/quizzes"],
+    queryFn: getQueryFn(),
   });
 
-  const { data: questions = [] } = useQuery({
-    queryKey: ['/api/quizzes', selectedQuiz?.id, 'questions'],
-    enabled: !!selectedQuiz,
-  });
-
-  const { data: userAttempts = [] } = useQuery({
-    queryKey: ['/api/user/quiz-attempts'],
-    enabled: !!user,
-  });
-
-  const submitQuizMutation = useMutation({
-    mutationFn: async (attemptData: any) => {
-      await apiRequest(`/api/quizzes/${selectedQuiz.id}/attempt`, 'POST', attemptData);
+  const createQuizMutation = useMutation({
+    mutationFn: async (quizData: { title: string; description: string; timeLimit: number }) => {
+      const res = await apiRequest("POST", "/api/quizzes", quizData);
+      return await res.json();
     },
-    onSuccess: (result) => {
-      setQuizCompleted(true);
-      setScore(result.score);
-      queryClient.invalidateQueries({ queryKey: ['/api/user/quiz-attempts'] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+      setIsCreateDialogOpen(false);
       toast({
-        title: "Quiz Completed!",
-        description: `You scored ${result.score}/${questions.length}`,
+        title: "Success",
+        description: "Quiz created successfully",
       });
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast({
         title: "Error",
-        description: "Failed to submit quiz. Please try again.",
+        description: error.message,
         variant: "destructive",
       });
     },
   });
 
-  const startQuiz = (quiz: any) => {
-    setSelectedQuiz(quiz);
-    setQuizStarted(true);
-    setCurrentQuestion(0);
-    setAnswers({});
-    setQuizCompleted(false);
-    setScore(0);
-    
-    if (quiz.timeLimit) {
-      setTimeLeft(quiz.timeLimit * 60); // Convert minutes to seconds
-    }
+  const handleCreateQuiz = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const timeLimit = parseInt(formData.get("timeLimit") as string);
+
+    createQuizMutation.mutate({ title, description, timeLimit });
   };
 
-  const submitQuiz = () => {
-    let correctAnswers = 0;
-    const userAnswers: {[key: number]: string} = {};
-
-    questions.forEach((question: any, index: number) => {
-      const userAnswer = answers[question.id];
-      userAnswers[question.id] = userAnswer;
-      
-      if (userAnswer === question.correctAnswer) {
-        correctAnswers++;
-      }
-    });
-
-    submitQuizMutation.mutate({
-      score: correctAnswers,
-      totalQuestions: questions.length,
-      answers: userAnswers,
-    });
-  };
-
-  const nextQuestion = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      submitQuiz();
-    }
-  };
-
-  const selectAnswer = (questionId: number, answer: string) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: answer
-    }));
-  };
-
-  if (quizStarted && selectedQuiz) {
-    const currentQ = questions[currentQuestion];
-    const progress = ((currentQuestion + 1) / questions.length) * 100;
-
+  if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>{selectedQuiz.title}</CardTitle>
-              <div className="flex items-center gap-4">
-                {timeLeft !== null && (
-                  <Badge variant="outline" className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-                  </Badge>
-                )}
-                <Badge variant="secondary">
-                  Question {currentQuestion + 1} of {questions.length}
-                </Badge>
-              </div>
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-48 bg-gray-200 rounded-lg"></div>
+              ))}
             </div>
-            <Progress value={progress} className="w-full" />
-          </CardHeader>
-          <CardContent>
-            {quizCompleted ? (
-              <div className="text-center space-y-4">
-                <div className="flex justify-center">
-                  {score >= questions.length * 0.7 ? (
-                    <CheckCircle className="h-16 w-16 text-green-500" />
-                  ) : (
-                    <XCircle className="h-16 w-16 text-red-500" />
-                  )}
-                </div>
-                <h3 className="text-2xl font-bold">Quiz Completed!</h3>
-                <p className="text-lg">
-                  Your Score: <span className="font-bold text-blue-600">{score}/{questions.length}</span>
-                </p>
-                <p className="text-gray-600">
-                  {score >= questions.length * 0.7 ? "Excellent work!" : "Keep practicing!"}
-                </p>
-                <Button onClick={() => {
-                  setQuizStarted(false);
-                  setSelectedQuiz(null);
-                }}>
-                  Back to Quizzes
-                </Button>
-              </div>
-            ) : currentQ ? (
-              <div className="space-y-6">
-                <h3 className="text-xl font-semibold">{currentQ.question}</h3>
-                <RadioGroup
-                  value={answers[currentQ.id] || ""}
-                  onValueChange={(value) => selectAnswer(currentQ.id, value)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="A" id="A" />
-                    <Label htmlFor="A" className="flex-1 cursor-pointer p-2 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">
-                      A) {currentQ.optionA}
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="B" id="B" />
-                    <Label htmlFor="B" className="flex-1 cursor-pointer p-2 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">
-                      B) {currentQ.optionB}
-                    </Label>
-                  </div>
-                  {currentQ.optionC && (
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="C" id="C" />
-                      <Label htmlFor="C" className="flex-1 cursor-pointer p-2 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">
-                        C) {currentQ.optionC}
-                      </Label>
-                    </div>
-                  )}
-                  {currentQ.optionD && (
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="D" id="D" />
-                      <Label htmlFor="D" className="flex-1 cursor-pointer p-2 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">
-                        D) {currentQ.optionD}
-                      </Label>
-                    </div>
-                  )}
-                </RadioGroup>
-                <div className="flex justify-between">
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
-                    disabled={currentQuestion === 0}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    onClick={nextQuestion}
-                    disabled={!answers[currentQ.id]}
-                  >
-                    {currentQuestion === questions.length - 1 ? "Submit Quiz" : "Next Question"}
-                  </Button>
-                </div>
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Quizzes</h1>
-        {user?.isAdmin && (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Quiz
-              </Button>
-            </DialogTrigger>
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Quizzes</h1>
+            <p className="text-gray-600 mt-1">Test your knowledge with interactive quizzes</p>
+          </div>
+          
+          {user?.isAdmin && (
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-lautech-blue hover:bg-lautech-blue/90" data-testid="button-create-quiz">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Quiz
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New Quiz</DialogTitle>
+                  <DialogDescription>
+                    Create a new quiz for students to take
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleCreateQuiz} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Quiz Title</Label>
+                    <Input
+                      id="title"
+                      name="title"
+                      placeholder="Enter quiz title"
+                      required
+                      data-testid="input-quiz-title"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      name="description"
+                      placeholder="Enter quiz description"
+                      required
+                      data-testid="textarea-quiz-description"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="timeLimit">Time Limit (minutes)</Label>
+                    <Input
+                      id="timeLimit"
+                      name="timeLimit"
+                      type="number"
+                      placeholder="30"
+                      min="1"
+                      max="180"
+                      required
+                      data-testid="input-quiz-time-limit"
+                    />
+                  </div>
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsCreateDialogOpen(false)}
+                      data-testid="button-cancel-quiz"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={createQuizMutation.isPending}
+                      data-testid="button-submit-quiz"
+                    >
+                      {createQuizMutation.isPending ? "Creating..." : "Create Quiz"}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Quizzes</p>
+                  <p className="text-2xl font-bold text-gray-900">{quizzes?.length || 0}</p>
+                </div>
+                <BookOpen className="h-8 w-8 text-lautech-blue" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Active Quizzes</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {quizzes?.filter(q => q.isActive).length || 0}
+                  </p>
+                </div>
+                <Trophy className="h-8 w-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">My Attempts</p>
+                  <p className="text-2xl font-bold text-gray-900">0</p>
+                </div>
+                <Users className="h-8 w-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quizzes Grid */}
+        {quizzes && quizzes.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {quizzes.map((quiz) => (
+              <Card key={quiz.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg font-semibold">{quiz.title}</CardTitle>
+                    <Badge variant={quiz.isActive ? "default" : "secondary"}>
+                      {quiz.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+                  <CardDescription className="text-sm text-gray-600">
+                    {quiz.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Clock className="h-4 w-4 mr-2" />
+                      {quiz.timeLimit} minutes
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      {quiz.totalQuestions} questions
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      Created: {new Date(quiz.createdAt).toLocaleDateString()}
+                    </div>
+                    <div className="pt-2">
+                      <Button 
+                        className="w-full bg-lautech-blue hover:bg-lautech-blue/90"
+                        onClick={() => setSelectedQuiz(quiz)}
+                        disabled={!quiz.isActive}
+                        data-testid={`button-take-quiz-${quiz.id}`}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        {quiz.isActive ? "Take Quiz" : "Unavailable"}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Quizzes Available</h3>
+              <p className="text-gray-600 mb-4">
+                {user?.isAdmin 
+                  ? "Create your first quiz to get started" 
+                  : "Check back later for new quizzes"}
+              </p>
+              {user?.isAdmin && (
+                <Button
+                  onClick={() => setIsCreateDialogOpen(true)}
+                  className="bg-lautech-blue hover:bg-lautech-blue/90"
+                  data-testid="button-create-first-quiz"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create First Quiz
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Quiz Details Modal */}
+        {selectedQuiz && (
+          <Dialog open={!!selectedQuiz} onOpenChange={() => setSelectedQuiz(null)}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Create New Quiz</DialogTitle>
+                <DialogTitle>{selectedQuiz.title}</DialogTitle>
+                <DialogDescription>
+                  {selectedQuiz.description}
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
-                <Input placeholder="Quiz Title" />
-                <Textarea placeholder="Quiz Description" rows={3} />
-                <Input type="number" placeholder="Time Limit (minutes)" />
-                <Button className="w-full">Create Quiz</Button>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center text-sm">
+                    <Clock className="h-4 w-4 mr-2 text-gray-500" />
+                    Time Limit: {selectedQuiz.timeLimit} minutes
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
+                    Questions: {selectedQuiz.totalQuestions}
+                  </div>
+                </div>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-yellow-800 mb-2">Instructions:</h4>
+                  <ul className="text-sm text-yellow-700 space-y-1">
+                    <li>• You have {selectedQuiz.timeLimit} minutes to complete this quiz</li>
+                    <li>• Once started, the timer cannot be paused</li>
+                    <li>• Make sure you have a stable internet connection</li>
+                    <li>• You can only take this quiz once</li>
+                  </ul>
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setSelectedQuiz(null)}
+                    data-testid="button-close-quiz-details"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-lautech-blue hover:bg-lautech-blue/90"
+                    data-testid="button-start-quiz"
+                  >
+                    Start Quiz
+                  </Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
         )}
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {quizzes.map((quiz: any) => {
-          const userAttempt = userAttempts.find((attempt: any) => attempt.quizId === quiz.id);
-          const bestScore = userAttempt ? userAttempt.score : null;
-
-          return (
-            <Card key={quiz.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>{quiz.title}</span>
-                  {bestScore !== null && (
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <Trophy className="h-3 w-3" />
-                      {bestScore}
-                    </Badge>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {quiz.description}
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  {quiz.timeLimit && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {quiz.timeLimit} min
-                    </Badge>
-                  )}
-                  <span className="text-sm text-gray-500">
-                    Created {new Date(quiz.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <Button
-                  className="w-full"
-                  onClick={() => startQuiz(quiz)}
-                >
-                  <Play className="h-4 w-4 mr-2" />
-                  {bestScore !== null ? "Retake Quiz" : "Start Quiz"}
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {quizzes.length === 0 && (
-        <Card>
-          <CardContent className="text-center py-12">
-            <Trophy className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">
-              No Quizzes Available
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Check back later for new quizzes to test your knowledge!
-            </p>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

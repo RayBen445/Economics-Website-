@@ -1,447 +1,320 @@
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import Navigation from "@/components/Navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "wouter";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { isUnauthorizedError } from "@/lib/authUtils";
-import { 
-  MessageSquare, 
-  Upload, 
-  Calendar, 
-  Send, 
-  Users, 
-  BookOpen,
-  Clock,
-  MapPin,
-  Mail,
-  Phone,
-  Building
-} from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+import { Bell, BookOpen, Calendar, MessageSquare, Users, Settings, TrendingUp, GraduationCap, Bot, FileText, Trophy, Shield } from "lucide-react";
 
 export default function Dashboard() {
-  const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
+  const { user } = useAuth();
 
   const { data: news = [], isLoading: newsLoading } = useQuery({
     queryKey: ["/api/news"],
-    retry: false,
+    queryFn: getQueryFn(),
   });
 
   const { data: events = [], isLoading: eventsLoading } = useQuery({
     queryKey: ["/api/events"],
-    retry: false,
+    queryFn: getQueryFn(),
   });
 
   const { data: faculty = [], isLoading: facultyLoading } = useQuery({
     queryKey: ["/api/faculty"],
-    retry: false,
+    queryFn: getQueryFn(),
   });
 
-  const { data: admins = [], isLoading: adminsLoading } = useQuery({
-    queryKey: ["/api/admin/users"],
-    retry: false,
-    queryFn: async () => {
-      try {
-        const response = await fetch("/api/admin/users", {
-          credentials: "include",
-        });
-        if (!response.ok) {
-          if (response.status === 403) {
-            return [];
-          }
-          throw new Error(`${response.status}: ${response.statusText}`);
-        }
-        return await response.json();
-      } catch (error) {
-        if (isUnauthorizedError(error as Error)) {
-          return [];
-        }
-        throw error;
-      }
-    },
+  const { data: quizzes = [], isLoading: quizzesLoading } = useQuery({
+    queryKey: ["/api/quizzes"],
+    queryFn: getQueryFn(),
   });
 
-  if (isLoading) {
-    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">Loading...</div>
-    </div>;
-  }
+  const recentNews = news.slice(0, 3);
+  const upcomingEvents = events.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation />
-
-      {/* Hero Section */}
-      <div className="lautech-gradient">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div className="text-white">
-              <h2 className="text-4xl font-bold mb-4">Welcome to LAUTECH Academic Portal</h2>
-              <p className="text-xl text-blue-100 mb-6">
-                Your comprehensive university management system for students, faculty, and administration.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[120px]">
-                  <div className="text-2xl font-bold">2,847</div>
-                  <div className="text-blue-100 text-sm">Active Students</div>
+      {/* Navigation */}
+      <nav className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <div className="flex-shrink-0 flex items-center">
+                <div className="w-10 h-10 bg-lautech-blue rounded-lg flex items-center justify-center">
+                  <GraduationCap className="text-white text-lg" />
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[120px]">
-                  <div className="text-2xl font-bold">156</div>
-                  <div className="text-blue-100 text-sm">Faculty Members</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[120px]">
-                  <div className="text-2xl font-bold">89</div>
-                  <div className="text-blue-100 text-sm">Active Courses</div>
+                <div className="ml-3">
+                  <h1 className="text-xl font-bold text-gray-900">LAUTECH Portal</h1>
+                  <p className="text-xs text-gray-600">Academic Management System</p>
                 </div>
               </div>
             </div>
-            <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
-                alt="University campus" 
-                className="rounded-xl shadow-2xl"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Quick Actions */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Button
-              variant="outline"
-              className="h-auto p-6 flex flex-col items-start text-left hover:shadow-md transition-shadow"
-              onClick={() => window.location.href = '/chat'}
-            >
-              <div className="flex items-center mb-4 w-full">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <MessageSquare className="text-green-600 text-xl" />
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-semibold text-gray-900">Join Chat</h4>
-                  <p className="text-sm text-gray-500">5 active channels</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm">
-                Connect with classmates and faculty members in real-time discussions.
-              </p>
-            </Button>
-
-            <Button
-              variant="outline"
-              className="h-auto p-6 flex flex-col items-start text-left hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center mb-4 w-full">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Upload className="text-blue-600 text-xl" />
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-semibold text-gray-900">Upload Files</h4>
-                  <p className="text-sm text-gray-500">PDF, DOC, Images</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm">
-                Share documents, assignments, and resources with the community.
-              </p>
-            </Button>
-
-            <Button
-              variant="outline"
-              className="h-auto p-6 flex flex-col items-start text-left hover:shadow-md transition-shadow"
-              onClick={() => window.location.href = '/events'}
-            >
-              <div className="flex items-center mb-4 w-full">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Calendar className="text-purple-600 text-xl" />
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-semibold text-gray-900">Events</h4>
-                  <p className="text-sm text-gray-500">{events.length} upcoming</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm">
-                View academic conferences, seminars, and university events.
-              </p>
-            </Button>
-
-            <Button
-              variant="outline"
-              className="h-auto p-6 flex flex-col items-start text-left hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center mb-4 w-full">
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <Send className="text-yellow-600 text-xl" />
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-semibold text-gray-900">Support</h4>
-                  <p className="text-sm text-gray-500">Via Telegram</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm">
-                Get help and submit feature suggestions through our Telegram bot.
-              </p>
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {/* Recent News */}
-          <div className="lg:col-span-2">
-            <Card>
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Recent News & Announcements</h3>
-                  <Button variant="ghost" size="sm" className="text-lautech-blue">
-                    View All
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                {newsLoading ? (
-                  <div className="space-y-4">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="animate-pulse flex space-x-4">
-                        <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                          <div className="h-3 bg-gray-200 rounded w-1/4"></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : news.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <BookOpen className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                    <p>No news articles available</p>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {news.slice(0, 3).map((article: any) => (
-                      <article key={article.id} className="flex space-x-4">
-                        <img 
-                          src={article.imageUrl || "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=100"} 
-                          alt={article.title}
-                          className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-gray-900 mb-1">{article.title}</h4>
-                          <p className="text-sm text-gray-600 mb-2">{article.excerpt}</p>
-                          <div className="flex items-center text-xs text-gray-500">
-                            <span>{new Date(article.createdAt).toLocaleDateString()}</span>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-700">Welcome, {user?.firstName || user?.username}</span>
+                {user?.isAdmin && (
+                  <Badge variant="default" className="bg-lautech-blue">
+                    <Shield className="h-3 w-3 mr-1" />
+                    Admin {user.adminLevel && user.adminLevel > 1 ? `L${user.adminLevel}` : ''}
+                  </Badge>
                 )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Upcoming Events & Admin Directory */}
-          <div className="space-y-8">
-            {/* Upcoming Events */}
-            <Card>
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Upcoming Events</h3>
               </div>
-              <CardContent className="p-6">
-                {eventsLoading ? (
-                  <div className="space-y-4">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="animate-pulse flex space-x-3">
-                        <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : events.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <Calendar className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                    <p>No upcoming events</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {events.slice(0, 3).map((event: any) => (
-                      <div key={event.id} className="flex items-start space-x-3">
-                        <div className="flex-shrink-0 w-12 h-12 bg-lautech-blue rounded-lg flex items-center justify-center">
-                          <span className="text-white text-sm font-bold">
-                            {new Date(event.startTime).getDate()}
-                          </span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-gray-900 text-sm">{event.title}</h4>
-                          <div className="flex items-center text-xs text-gray-600 mt-1">
-                            <Clock className="w-3 h-3 mr-1" />
-                            <span>{new Date(event.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                          </div>
-                          {event.location && (
-                            <div className="flex items-center text-xs text-gray-500 mt-1">
-                              <MapPin className="w-3 h-3 mr-1" />
-                              <span>{event.location}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <Button variant="ghost" size="sm" className="w-full mt-4 text-lautech-blue">
-                  View Full Calendar
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Admin Directory */}
-            <Card>
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Admin Directory</h3>
-              </div>
-              <CardContent className="p-6">
-                {adminsLoading ? (
-                  <div className="space-y-4">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="animate-pulse flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : admins.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <Users className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                    <p>No admin information available</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {admins.slice(0, 3).map((admin: any) => (
-                      <div key={admin.id} className="flex items-center space-x-3">
-                        <Avatar className="w-10 h-10">
-                          <AvatarImage src={admin.profileImageUrl} alt={admin.firstName} />
-                          <AvatarFallback>
-                            {admin.firstName?.[0]}{admin.lastName?.[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 text-sm">
-                            {admin.firstName} {admin.lastName}
-                          </p>
-                          <p className="text-xs text-gray-600">
-                            {admin.adminLevel === 2 ? 'Main Administrator' : 'Administrator'}
-                          </p>
-                        </div>
-                        <Badge variant="secondary" className="text-xs">
-                          Online
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Faculty Directory Preview */}
-        <Card className="mb-12">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Faculty Directory</h3>
-              <Button 
-                onClick={() => window.location.href = '/faculty'}
-                className="bg-lautech-blue text-white hover:bg-lautech-blue/90"
-              >
-                View All Faculty
+              <Button variant="outline" onClick={() => {
+                fetch('/api/logout', { method: 'POST' }).then(() => {
+                  window.location.reload();
+                });
+              }}>
+                Logout
               </Button>
             </div>
           </div>
-          <CardContent className="p-6">
-            {facultyLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="animate-pulse bg-gray-50 rounded-lg p-4">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
-                      <div className="flex-1 space-y-2">
-                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                      </div>
+        </div>
+      </nav>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome to LAUTECH Portal</h2>
+          <p className="text-gray-600">Your gateway to academic excellence and campus life</p>
+        </div>
+
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Link href="/faculty" data-testid="link-faculty">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+              <CardContent className="p-6 text-center">
+                <Users className="h-10 w-10 text-blue-600 mx-auto mb-3" />
+                <h3 className="font-semibold text-gray-900 mb-1">Faculty Directory</h3>
+                <p className="text-sm text-gray-600">Browse professors and staff</p>
+                <div className="mt-2">
+                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                    {faculty.length} members
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/quizzes" data-testid="link-quizzes">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+              <CardContent className="p-6 text-center">
+                <Trophy className="h-10 w-10 text-green-600 mx-auto mb-3" />
+                <h3 className="font-semibold text-gray-900 mb-1">Quizzes</h3>
+                <p className="text-sm text-gray-600">Test your knowledge</p>
+                <div className="mt-2">
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                    {quizzes.length} available
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/chat" data-testid="link-chat">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+              <CardContent className="p-6 text-center">
+                <MessageSquare className="h-10 w-10 text-purple-600 mx-auto mb-3" />
+                <h3 className="font-semibold text-gray-900 mb-1">Chat Channels</h3>
+                <p className="text-sm text-gray-600">Join discussions</p>
+                <div className="mt-2">
+                  <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                    Live
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+            <CardContent className="p-6 text-center">
+              <Bot className="h-10 w-10 text-orange-600 mx-auto mb-3" />
+              <h3 className="font-semibold text-gray-900 mb-1">AI Assistant</h3>
+              <p className="text-sm text-gray-600">Get academic help</p>
+              <div className="mt-2">
+                <Button 
+                  size="sm" 
+                  className="bg-orange-600 hover:bg-orange-700 text-white"
+                  data-testid="button-ai-chat"
+                >
+                  Start Chat
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* News Section */}
+          <Card className="lg:col-span-2">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center">
+                  <Bell className="h-5 w-5 mr-2 text-lautech-blue" />
+                  Latest News
+                </CardTitle>
+                <CardDescription>Stay updated with campus announcements</CardDescription>
+              </div>
+              <Link href="/events">
+                <Button variant="outline" size="sm" data-testid="button-view-all-news">
+                  View All
+                </Button>
+              </Link>
+            </CardHeader>
+            <CardContent>
+              {newsLoading ? (
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                     </div>
+                  ))}
+                </div>
+              ) : recentNews.length > 0 ? (
+                <div className="space-y-4">
+                  {recentNews.map((item: any) => (
+                    <div key={item.id} className="border-l-4 border-lautech-blue pl-4">
+                      <h4 className="font-semibold text-gray-900">{item.title}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{item.content.substring(0, 100)}...</p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {new Date(item.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600">No news available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Quick Stats & Events */}
+          <div className="space-y-6">
+            {/* Stats Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
+                  Platform Stats
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Faculty Members</span>
+                  <span className="font-semibold">{faculty.length}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Active Quizzes</span>
+                  <span className="font-semibold">{quizzes.filter((q: any) => q.isActive).length}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Upcoming Events</span>
+                  <span className="font-semibold">{events.length}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">News Articles</span>
+                  <span className="font-semibold">{news.length}</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Upcoming Events */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center">
+                    <Calendar className="h-5 w-5 mr-2 text-lautech-blue" />
+                    Upcoming Events
+                  </CardTitle>
+                </div>
+                <Link href="/events">
+                  <Button variant="outline" size="sm" data-testid="button-view-all-events">
+                    View All
+                  </Button>
+                </Link>
+              </CardHeader>
+              <CardContent>
+                {eventsLoading ? (
+                  <div className="space-y-3">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="animate-pulse">
+                        <div className="h-3 bg-gray-200 rounded w-3/4 mb-1"></div>
+                        <div className="h-2 bg-gray-200 rounded w-1/2"></div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : faculty.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <Users className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                <p>No faculty members found</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {faculty.slice(0, 6).map((member: any) => (
-                  <div key={member.id} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={member.avatar} alt={member.name} />
-                        <AvatarFallback>
-                          {member.name.split(' ').map((n: string) => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-gray-900">{member.name}</h4>
-                        <p className="text-sm text-gray-600">{member.title}</p>
+                ) : upcomingEvents.length > 0 ? (
+                  <div className="space-y-3">
+                    {upcomingEvents.map((event: any) => (
+                      <div key={event.id} className="bg-gray-50 rounded-lg p-3">
+                        <h5 className="font-medium text-sm text-gray-900">{event.title}</h5>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {new Date(event.date).toLocaleDateString()}
+                        </p>
+                        {event.location && (
+                          <p className="text-xs text-gray-500">{event.location}</p>
+                        )}
                       </div>
-                    </div>
-                    <div className="space-y-2 text-sm text-gray-600">
-                      <div className="flex items-center">
-                        <Mail className="w-4 h-4 text-gray-400 mr-2" />
-                        <span className="truncate">{member.email}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Building className="w-4 h-4 text-gray-400 mr-2" />
-                        <span>{member.department}</span>
-                      </div>
-                      {member.phone && (
-                        <div className="flex items-center">
-                          <Phone className="w-4 h-4 text-gray-400 mr-2" />
-                          <span>{member.phone}</span>
-                        </div>
-                      )}
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                ) : (
+                  <div className="text-center py-6">
+                    <Calendar className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600">No upcoming events</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Additional Features Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200">
+            <CardContent className="p-6 text-center">
+              <FileText className="h-10 w-10 text-indigo-600 mx-auto mb-3" />
+              <h3 className="font-semibold text-gray-900 mb-2">Private Messages</h3>
+              <p className="text-sm text-gray-600 mb-4">Send direct messages to faculty and peers</p>
+              <Button className="bg-indigo-600 hover:bg-indigo-700" data-testid="button-messages">
+                Open Messages
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200">
+            <CardContent className="p-6 text-center">
+              <Settings className="h-10 w-10 text-pink-600 mx-auto mb-3" />
+              <h3 className="font-semibold text-gray-900 mb-2">Profile Settings</h3>
+              <p className="text-sm text-gray-600 mb-4">Update your profile and preferences</p>
+              <Link href="/profile">
+                <Button className="bg-pink-600 hover:bg-pink-700" data-testid="button-profile">
+                  Edit Profile
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {user?.isAdmin && (
+            <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+              <CardContent className="p-6 text-center">
+                <Shield className="h-10 w-10 text-red-600 mx-auto mb-3" />
+                <h3 className="font-semibold text-gray-900 mb-2">Admin Panel</h3>
+                <p className="text-sm text-gray-600 mb-4">Manage users, content, and system settings</p>
+                <Link href="/admin">
+                  <Button className="bg-red-600 hover:bg-red-700" data-testid="button-admin">
+                    Admin Dashboard
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );
