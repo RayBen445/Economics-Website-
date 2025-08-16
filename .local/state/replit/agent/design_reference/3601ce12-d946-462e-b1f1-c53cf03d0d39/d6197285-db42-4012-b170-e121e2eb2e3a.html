@@ -1,0 +1,667 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAUTECH Academic Portal - University Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'lautech-blue': '#1E3A8A',
+                        'lautech-gold': '#F59E0B',
+                        'lautech-light-blue': '#3B82F6',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- @COMPONENT: NavigationHeader [user authentication, navigation links] -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-10 h-10 bg-lautech-blue rounded-lg flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-white text-lg"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h1 class="text-xl font-bold text-gray-900" data-bind="site.name">LAUTECH Portal</h1>
+                            <p class="text-xs text-gray-600">Academic Management System</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-gray-700 hover:text-lautech-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="#" class="text-gray-700 hover:text-lautech-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-comments mr-2"></i>Chat
+                    </a>
+                    <a href="#" class="text-gray-700 hover:text-lautech-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-calendar mr-2"></i>Events
+                    </a>
+                    <a href="#" class="text-gray-700 hover:text-lautech-blue px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-users mr-2"></i>Faculty
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 text-gray-600 hover:text-lautech-blue transition-colors">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <img class="h-8 w-8 rounded-full object-cover" data-bind="user.avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="User avatar">
+                        <span class="text-sm font-medium text-gray-700" data-bind="user.name">John Student</span>
+                        <button class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: NavigationHeader -->
+
+    <!-- @COMPONENT: HeroSection [welcome message, quick stats] -->
+    <div class="bg-gradient-to-br from-lautech-blue to-lautech-light-blue">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="text-white">
+                    <h2 class="text-4xl font-bold mb-4">Welcome to LAUTECH Academic Portal</h2>
+                    <p class="text-xl text-blue-100 mb-6">Your comprehensive university management system for students, faculty, and administration.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[120px]">
+                            <div class="text-2xl font-bold" data-bind="stats.totalStudents">2,847</div>
+                            <div class="text-blue-100 text-sm">Active Students</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[120px]">
+                            <div class="text-2xl font-bold" data-bind="stats.totalFaculty">156</div>
+                            <div class="text-blue-100 text-sm">Faculty Members</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[120px]">
+                            <div class="text-2xl font-bold" data-bind="stats.activeCourses">89</div>
+                            <div class="text-blue-100 text-sm">Active Courses</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <!-- Modern university campus with students -->
+                    <img src="https://pixabay.com/get/g9e4f18d971c55960237514036cf34e34ac67b4999f68aa5ca26b032dca5a309de60d88ad43a1a634bc708bf2bc71b8ef194c4e8a2031464f0253234026248133_1280.jpg" alt="University campus with students" class="rounded-xl shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: HeroSection -->
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- @COMPONENT: QuickActions [primary user actions] -->
+        <div class="mb-12">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <button class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow text-left group" data-event="click:openChat">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                            <i class="fas fa-comments text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="font-semibold text-gray-900">Join Chat</h4>
+                            <p class="text-sm text-gray-500">5 active channels</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm">Connect with classmates and faculty members in real-time discussions.</p>
+                </button>
+
+                <button class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow text-left group" data-event="click:uploadDocument">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                            <i class="fas fa-file-upload text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="font-semibold text-gray-900">Upload Files</h4>
+                            <p class="text-sm text-gray-500">PDF, DOC, Images</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm">Share documents, assignments, and resources with the community.</p>
+                </button>
+
+                <button class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow text-left group" data-event="click:viewEvents">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                            <i class="fas fa-calendar-alt text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="font-semibold text-gray-900">Events</h4>
+                            <p class="text-sm text-gray-500">3 upcoming</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm">View academic conferences, seminars, and university events.</p>
+                </button>
+
+                <button class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow text-left group" data-event="click:contactSupport">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center group-hover:bg-yellow-200 transition-colors">
+                            <i class="fab fa-telegram text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="font-semibold text-gray-900">Support</h4>
+                            <p class="text-sm text-gray-500">Via Telegram</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm">Get help and submit feature suggestions through our Telegram bot.</p>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: QuickActions -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- @COMPONENT: RecentNews [news and announcements] -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Recent News & Announcements</h3>
+                            <button class="text-lautech-blue hover:text-lautech-blue/80 text-sm font-medium">View All</button>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <!-- @MAP: news.map(item => ( -->
+                        <article class="flex space-x-4" data-mock="true">
+                            <!-- Economics students studying in modern classroom -->
+                            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=100" alt="Economics students studying" class="w-16 h-16 rounded-lg object-cover flex-shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-gray-900 mb-1" data-bind="news.title">Economics Department Announces New Research Initiative</h4>
+                                <p class="text-sm text-gray-600 mb-2" data-bind="news.excerpt">The Department of Economics is launching a comprehensive research program focusing on sustainable development...</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <span data-bind="news.author">Dr. Sarah Johnson</span>
+                                    <span class="mx-2">•</span>
+                                    <span data-bind="news.date">2 hours ago</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="flex space-x-4" data-mock="true">
+                            <!-- Academic conference presentation -->
+                            <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=100" alt="Academic conference presentation" class="w-16 h-16 rounded-lg object-cover flex-shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-gray-900 mb-1" data-bind="news.title">Annual Academic Conference Registration Open</h4>
+                                <p class="text-sm text-gray-600 mb-2" data-bind="news.excerpt">Registration is now open for the 2024 LAUTECH Academic Conference. Submit your abstracts by March 15th...</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <span data-bind="news.author">Conference Committee</span>
+                                    <span class="mx-2">•</span>
+                                    <span data-bind="news.date">1 day ago</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="flex space-x-4" data-mock="true">
+                            <!-- University library with books -->
+                            <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=100" alt="Library books and study materials" class="w-16 h-16 rounded-lg object-cover flex-shrink-0">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-gray-900 mb-1" data-bind="news.title">Library Digital Resources Expansion</h4>
+                                <p class="text-sm text-gray-600 mb-2" data-bind="news.excerpt">The university library has added 500+ new digital books and research papers to the online catalog...</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <span data-bind="news.author">Library Administration</span>
+                                    <span class="mx-2">•</span>
+                                    <span data-bind="news.date">3 days ago</span>
+                                </div>
+                            </div>
+                        </article>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: RecentNews -->
+
+            <!-- @COMPONENT: UpcomingEvents [event calendar sidebar] -->
+            <div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Upcoming Events</h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <!-- @MAP: events.map(event => ( -->
+                        <div class="flex items-start space-x-3" data-mock="true">
+                            <div class="flex-shrink-0 w-12 h-12 bg-lautech-blue rounded-lg flex items-center justify-center">
+                                <span class="text-white text-sm font-bold" data-bind="event.day">15</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-gray-900 text-sm" data-bind="event.title">Economics Seminar Series</h4>
+                                <p class="text-xs text-gray-600 mt-1" data-bind="event.time">2:00 PM - 4:00 PM</p>
+                                <p class="text-xs text-gray-500" data-bind="event.location">Hall A, Main Campus</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3" data-mock="true">
+                            <div class="flex-shrink-0 w-12 h-12 bg-lautech-gold rounded-lg flex items-center justify-center">
+                                <span class="text-white text-sm font-bold" data-bind="event.day">18</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-gray-900 text-sm" data-bind="event.title">Faculty Meeting</h4>
+                                <p class="text-xs text-gray-600 mt-1" data-bind="event.time">10:00 AM - 12:00 PM</p>
+                                <p class="text-xs text-gray-500" data-bind="event.location">Conference Room B</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3" data-mock="true">
+                            <div class="flex-shrink-0 w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                                <span class="text-white text-sm font-bold" data-bind="event.day">22</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-medium text-gray-900 text-sm" data-bind="event.title">Student Research Showcase</h4>
+                                <p class="text-xs text-gray-600 mt-1" data-bind="event.time">9:00 AM - 5:00 PM</p>
+                                <p class="text-xs text-gray-500" data-bind="event.location">Student Center</p>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+
+                        <button class="w-full mt-4 text-center text-lautech-blue hover:text-lautech-blue/80 text-sm font-medium py-2">
+                            View Full Calendar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- @COMPONENT: AdminDirectory [list of administrators] -->
+                <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Admin Directory</h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <!-- @MAP: admins.map(admin => ( -->
+                        <div class="flex items-center space-x-3" data-mock="true">
+                            <img class="w-10 h-10 rounded-full object-cover" data-bind="admin.avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100" alt="Admin avatar">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-900 text-sm" data-bind="admin.name">Heritage Oladoye</p>
+                                <p class="text-xs text-gray-600" data-bind="admin.role">Main Administrator</p>
+                            </div>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Online
+                            </span>
+                        </div>
+
+                        <div class="flex items-center space-x-3" data-mock="true">
+                            <img class="w-10 h-10 rounded-full object-cover" data-bind="admin.avatar" src="https://pixabay.com/get/g9f523f8893972aa7c81d00e0b5d1039dfae7b01a0a90ea3be049b5e81241902b6c792c10e78b9e562d1d2a5eff466d21321264e6e1e09d799210c98fd1eae105_1280.jpg" alt="Admin avatar">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-900 text-sm" data-bind="admin.name">Dr. Sarah Johnson</p>
+                                <p class="text-xs text-gray-600" data-bind="admin.role">Faculty Admin</p>
+                            </div>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                Away
+                            </span>
+                        </div>
+
+                        <div class="flex items-center space-x-3" data-mock="true">
+                            <img class="w-10 h-10 rounded-full object-cover" data-bind="admin.avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100" alt="Admin avatar">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-900 text-sm" data-bind="admin.name">Michael Chen</p>
+                                <p class="text-xs text-gray-600" data-bind="admin.role">Student Affairs</p>
+                            </div>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                Offline
+                            </span>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: AdminDirectory -->
+            </div>
+            <!-- @END_COMPONENT: UpcomingEvents -->
+        </div>
+
+        <!-- @COMPONENT: FacultyDirectory [faculty listing with search] -->
+        <div class="mb-12">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Faculty Directory</h3>
+                        <button class="bg-lautech-blue text-white px-4 py-2 rounded-lg hover:bg-lautech-blue/90 transition-colors text-sm font-medium" data-event="click:addFaculty">
+                            <i class="fas fa-plus mr-2"></i>Add Faculty
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <input type="text" placeholder="Search faculty members..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lautech-blue focus:border-transparent">
+                        <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- @MAP: faculty.map(member => ( -->
+                        <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors" data-mock="true">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <img class="w-12 h-12 rounded-full object-cover" data-bind="faculty.avatar" src="https://images.unsplash.com/photo-1559569542-bbf963cfec9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="Faculty member">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold text-gray-900" data-bind="faculty.name">Dr. Sarah Johnson</h4>
+                                    <p class="text-sm text-gray-600" data-bind="faculty.title">Professor of Economics</p>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm text-gray-600">
+                                <div class="flex items-center">
+                                    <i class="fas fa-envelope w-4 text-gray-400 mr-2"></i>
+                                    <span data-bind="faculty.email">s.johnson@lautech.edu.ng</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-building w-4 text-gray-400 mr-2"></i>
+                                    <span data-bind="faculty.department">Economics Department</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-phone w-4 text-gray-400 mr-2"></i>
+                                    <span data-bind="faculty.phone">+234 xxx xxx xxxx</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors" data-mock="true">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <img class="w-12 h-12 rounded-full object-cover" data-bind="faculty.avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="Faculty member">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold text-gray-900" data-bind="faculty.name">Dr. Michael Chen</h4>
+                                    <p class="text-sm text-gray-600" data-bind="faculty.title">Associate Professor</p>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm text-gray-600">
+                                <div class="flex items-center">
+                                    <i class="fas fa-envelope w-4 text-gray-400 mr-2"></i>
+                                    <span data-bind="faculty.email">m.chen@lautech.edu.ng</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-building w-4 text-gray-400 mr-2"></i>
+                                    <span data-bind="faculty.department">Computer Science</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-phone w-4 text-gray-400 mr-2"></i>
+                                    <span data-bind="faculty.phone">+234 xxx xxx xxxx</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors" data-mock="true">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <img class="w-12 h-12 rounded-full object-cover" data-bind="faculty.avatar" src="https://pixabay.com/get/g9f523f8893972aa7c81d00e0b5d1039dfae7b01a0a90ea3be049b5e81241902b6c792c10e78b9e562d1d2a5eff466d21321264e6e1e09d799210c98fd1eae105_1280.jpg" alt="Faculty member">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold text-gray-900" data-bind="faculty.name">Dr. Adunni Okafor</h4>
+                                    <p class="text-sm text-gray-600" data-bind="faculty.title">Senior Lecturer</p>
+                                </div>
+                            </div>
+                            <div class="space-y-2 text-sm text-gray-600">
+                                <div class="flex items-center">
+                                    <i class="fas fa-envelope w-4 text-gray-400 mr-2"></i>
+                                    <span data-bind="faculty.email">a.okafor@lautech.edu.ng</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-building w-4 text-gray-400 mr-2"></i>
+                                    <span data-bind="faculty.department">Business Administration</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-phone w-4 text-gray-400 mr-2"></i>
+                                    <span data-bind="faculty.phone">+234 xxx xxx xxxx</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: FacultyDirectory -->
+
+        <!-- @COMPONENT: AdminPanel [user management and system administration] -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-12">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Administration Panel</h3>
+                <p class="text-sm text-gray-600 mt-1">Manage users, content, and system settings</p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-medium text-red-900">User Management</h4>
+                            <i class="fas fa-users text-red-600"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <button class="w-full text-left text-sm text-red-700 hover:text-red-900 py-1" data-event="click:banUser">Ban/Restrict Users</button>
+                            <button class="w-full text-left text-sm text-red-700 hover:text-red-900 py-1" data-event="click:moderateContent">Content Moderation</button>
+                            <button class="w-full text-left text-sm text-red-700 hover:text-red-900 py-1" data-event="click:viewReports">View Reports</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-medium text-blue-900">Admin Controls</h4>
+                            <i class="fas fa-cog text-blue-600"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <button class="w-full text-left text-sm text-blue-700 hover:text-blue-900 py-1" data-event="click:addAdmin">Add/Remove Admins</button>
+                            <button class="w-full text-left text-sm text-blue-700 hover:text-blue-900 py-1" data-event="click:manageRoles">Manage Roles</button>
+                            <button class="w-full text-left text-sm text-blue-700 hover:text-blue-900 py-1" data-event="click:systemSettings">System Settings</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-medium text-green-900">Content Management</h4>
+                            <i class="fas fa-file-alt text-green-600"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <button class="w-full text-left text-sm text-green-700 hover:text-green-900 py-1" data-event="click:manageNews">Manage News/Posts</button>
+                            <button class="w-full text-left text-sm text-green-700 hover:text-green-900 py-1" data-event="click:uploadFiles">File Management</button>
+                            <button class="w-full text-left text-sm text-green-700 hover:text-green-900 py-1" data-event="click:customizePage">Page Customization</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-medium text-yellow-900">Analytics</h4>
+                            <i class="fas fa-chart-bar text-yellow-600"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <button class="w-full text-left text-sm text-yellow-700 hover:text-yellow-900 py-1" data-event="click:viewAnalytics">User Activity</button>
+                            <button class="w-full text-left text-sm text-yellow-700 hover:text-yellow-900 py-1" data-event="click:systemLogs">System Logs</button>
+                            <button class="w-full text-left text-sm text-yellow-700 hover:text-yellow-900 py-1" data-event="click:generateReports">Generate Reports</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: AdminPanel -->
+    </div>
+
+    <!-- @COMPONENT: Footer [site information and links] -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-lautech-blue rounded-lg flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-white text-lg"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-xl font-bold">LAUTECH Portal</h4>
+                            <p class="text-gray-400 text-sm">Academic Management System</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mb-4">Connecting students, faculty, and administration in a comprehensive digital platform for academic excellence.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-telegram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="font-semibold mb-4">Quick Links</h5>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Dashboard</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Faculty Directory</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Events Calendar</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Document Library</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Chat Rooms</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="font-semibold mb-4">Support</h5>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact Support</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Report Issue</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Feature Requests</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Telegram Bot</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-400">© 2024 LAUTECH Academic Portal. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0 text-sm text-gray-400">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-white transition-colors">Academic Guidelines</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <!-- @COMPONENT: ChatModal [real-time chat interface] -->
+    <div id="chatModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" data-implementation="Toggle visibility based on chat state">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl h-5/6 flex flex-col">
+            <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">LAUTECH Chat Rooms</h3>
+                <button class="text-gray-400 hover:text-gray-600" data-event="click:closeChat">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-1 overflow-hidden">
+                <div class="w-1/4 border-r border-gray-200 bg-gray-50">
+                    <div class="p-4">
+                        <h4 class="font-medium text-gray-900 mb-3">Channels</h4>
+                        <div class="space-y-2">
+                            <!-- @MAP: channels.map(channel => ( -->
+                            <button class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors" data-mock="true">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-hashtag text-gray-400"></i>
+                                    <span class="font-medium text-gray-900" data-bind="channel.name">general</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1" data-bind="channel.members">247 members</p>
+                            </button>
+
+                            <button class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors" data-mock="true">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-hashtag text-gray-400"></i>
+                                    <span class="font-medium text-gray-900" data-bind="channel.name">economics</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1" data-bind="channel.members">89 members</p>
+                            </button>
+
+                            <button class="w-full text-left p-3 rounded-lg hover:bg-gray-200 transition-colors" data-mock="true">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-hashtag text-gray-400"></i>
+                                    <span class="font-medium text-gray-900" data-bind="channel.name">announcements</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1" data-bind="channel.members">156 members</p>
+                            </button>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 flex flex-col">
+                    <div class="flex-1 p-4 overflow-y-auto">
+                        <div class="space-y-4">
+                            <!-- @MAP: messages.map(message => ( -->
+                            <div class="flex space-x-3" data-mock="true">
+                                <img class="w-8 h-8 rounded-full" data-bind="message.user.avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100" alt="User avatar">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="font-medium text-gray-900 text-sm" data-bind="message.user.name">John Student</span>
+                                        <span class="text-xs text-gray-500" data-bind="message.timestamp">2:30 PM</span>
+                                    </div>
+                                    <p class="text-gray-700 text-sm" data-bind="message.content">Hey everyone! Just wanted to share some notes from today's economics lecture. Let me know if you need them!</p>
+                                </div>
+                            </div>
+
+                            <div class="flex space-x-3" data-mock="true">
+                                <img class="w-8 h-8 rounded-full" data-bind="message.user.avatar" src="https://pixabay.com/get/g9f523f8893972aa7c81d00e0b5d1039dfae7b01a0a90ea3be049b5e81241902b6c792c10e78b9e562d1d2a5eff466d21321264e6e1e09d799210c98fd1eae105_1280.jpg" alt="User avatar">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="font-medium text-gray-900 text-sm" data-bind="message.user.name">Sarah Johnson</span>
+                                        <span class="text-xs text-gray-500" data-bind="message.timestamp">2:32 PM</span>
+                                    </div>
+                                    <p class="text-gray-700 text-sm" data-bind="message.content">That would be great! Thanks for sharing 📚</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-200 p-4">
+                        <div class="flex space-x-3">
+                            <input type="text" placeholder="Type your message..." class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lautech-blue focus:border-transparent">
+                            <button class="bg-lautech-blue text-white px-4 py-2 rounded-lg hover:bg-lautech-blue/90 transition-colors" data-event="click:sendMessage">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ChatModal -->
+
+    <script>
+        // TODO: Implement real-time chat functionality with WebSocket connections
+        // TODO: Implement user authentication with Replit Auth
+        // TODO: Implement database connections to PostgreSQL
+        // TODO: Implement file upload system for documents and images
+        // TODO: Implement Telegram bot integration
+        // TODO: Implement admin management and user moderation system
+        // TODO: Implement event calendar functionality
+        // TODO: Implement AI integration features
+
+        (function() {
+            // Basic UI interactions for demonstration
+            const chatModal = document.getElementById('chatModal');
+            
+            // Show chat modal when chat button is clicked
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('[data-event="click:openChat"]')) {
+                    chatModal.classList.remove('hidden');
+                }
+                
+                if (e.target.closest('[data-event="click:closeChat"]')) {
+                    chatModal.classList.add('hidden');
+                }
+            });
+
+            // Close modal when clicking outside
+            chatModal.addEventListener('click', function(e) {
+                if (e.target === chatModal) {
+                    chatModal.classList.add('hidden');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

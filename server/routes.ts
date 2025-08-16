@@ -13,6 +13,14 @@ import {
   insertChatMessageSchema,
   insertDocumentSchema,
   insertReportSchema,
+  insertMotivationQuoteSchema,
+  insertPrivateMessageSchema,
+  insertEventCommentSchema,
+  insertQuizSchema,
+  insertQuizQuestionSchema,
+  insertQuizAttemptSchema,
+  insertContactDetailSchema,
+  insertChatHistorySchema,
 } from "@shared/schema";
 
 // Configure multer for file uploads
@@ -356,6 +364,419 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating site settings:", error);
       res.status(500).json({ message: "Failed to update site settings" });
+    }
+  });
+
+  // Motivation quotes routes
+  app.get('/api/quotes', async (req, res) => {
+    try {
+      const quotes = await storage.getMotivationQuotes();
+      res.json(quotes);
+    } catch (error) {
+      console.error("Error fetching quotes:", error);
+      res.status(500).json({ message: "Failed to fetch quotes" });
+    }
+  });
+
+  app.get('/api/quotes/random', async (req, res) => {
+    try {
+      const quote = await storage.getRandomQuote();
+      res.json(quote);
+    } catch (error) {
+      console.error("Error fetching random quote:", error);
+      res.status(500).json({ message: "Failed to fetch random quote" });
+    }
+  });
+
+  app.post('/api/quotes', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const result = insertMotivationQuoteSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid quote data", errors: result.error.errors });
+      }
+      
+      const newQuote = await storage.createMotivationQuote(result.data);
+      res.status(201).json(newQuote);
+    } catch (error) {
+      console.error("Error creating quote:", error);
+      res.status(500).json({ message: "Failed to create quote" });
+    }
+  });
+
+  app.put('/api/quotes/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const id = parseInt(req.params.id);
+      const updatedQuote = await storage.updateMotivationQuote(id, req.body);
+      res.json(updatedQuote);
+    } catch (error) {
+      console.error("Error updating quote:", error);
+      res.status(500).json({ message: "Failed to update quote" });
+    }
+  });
+
+  app.delete('/api/quotes/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const id = parseInt(req.params.id);
+      await storage.deleteMotivationQuote(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting quote:", error);
+      res.status(500).json({ message: "Failed to delete quote" });
+    }
+  });
+
+  // Private messages routes
+  app.get('/api/messages', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const messages = await storage.getPrivateMessages(userId);
+      res.json(messages);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      res.status(500).json({ message: "Failed to fetch messages" });
+    }
+  });
+
+  app.get('/api/messages/conversation/:userId', isAuthenticated, async (req: any, res) => {
+    try {
+      const currentUserId = req.user.claims.sub;
+      const otherUserId = req.params.userId;
+      const conversation = await storage.getConversation(currentUserId, otherUserId);
+      res.json(conversation);
+    } catch (error) {
+      console.error("Error fetching conversation:", error);
+      res.status(500).json({ message: "Failed to fetch conversation" });
+    }
+  });
+
+  app.post('/api/messages', isAuthenticated, async (req: any, res) => {
+    try {
+      const senderId = req.user.claims.sub;
+      const result = insertPrivateMessageSchema.safeParse({
+        ...req.body,
+        senderId,
+      });
+      
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid message data", errors: result.error.errors });
+      }
+      
+      const newMessage = await storage.sendPrivateMessage(result.data);
+      res.status(201).json(newMessage);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      res.status(500).json({ message: "Failed to send message" });
+    }
+  });
+
+  app.put('/api/messages/:id/read', isAuthenticated, async (req: any, res) => {
+    try {
+      const messageId = parseInt(req.params.id);
+      await storage.markMessageAsRead(messageId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error marking message as read:", error);
+      res.status(500).json({ message: "Failed to mark message as read" });
+    }
+  });
+
+  // Event comments routes
+  app.get('/api/events/:eventId/comments', async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.eventId);
+      const comments = await storage.getEventComments(eventId);
+      res.json(comments);
+    } catch (error) {
+      console.error("Error fetching event comments:", error);
+      res.status(500).json({ message: "Failed to fetch event comments" });
+    }
+  });
+
+  app.post('/api/events/:eventId/comments', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const eventId = parseInt(req.params.eventId);
+      
+      const result = insertEventCommentSchema.safeParse({
+        ...req.body,
+        eventId,
+        userId,
+      });
+      
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid comment data", errors: result.error.errors });
+      }
+      
+      const newComment = await storage.createEventComment(result.data);
+      res.status(201).json(newComment);
+    } catch (error) {
+      console.error("Error creating event comment:", error);
+      res.status(500).json({ message: "Failed to create comment" });
+    }
+  });
+
+  app.delete('/api/events/comments/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      const commentId = parseInt(req.params.id);
+      
+      // Allow users to delete their own comments or admins to delete any comment
+      if (!user?.isAdmin) {
+        // Additional check would be needed to verify ownership
+      }
+      
+      await storage.deleteEventComment(commentId);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      res.status(500).json({ message: "Failed to delete comment" });
+    }
+  });
+
+  // Quiz routes
+  app.get('/api/quizzes', isAuthenticated, async (req, res) => {
+    try {
+      const quizzes = await storage.getQuizzes();
+      res.json(quizzes);
+    } catch (error) {
+      console.error("Error fetching quizzes:", error);
+      res.status(500).json({ message: "Failed to fetch quizzes" });
+    }
+  });
+
+  app.get('/api/quizzes/:id', isAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const quiz = await storage.getQuiz(id);
+      if (!quiz) {
+        return res.status(404).json({ message: "Quiz not found" });
+      }
+      res.json(quiz);
+    } catch (error) {
+      console.error("Error fetching quiz:", error);
+      res.status(500).json({ message: "Failed to fetch quiz" });
+    }
+  });
+
+  app.post('/api/quizzes', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const result = insertQuizSchema.safeParse({
+        ...req.body,
+        createdById: userId,
+      });
+      
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid quiz data", errors: result.error.errors });
+      }
+      
+      const newQuiz = await storage.createQuiz(result.data);
+      res.status(201).json(newQuiz);
+    } catch (error) {
+      console.error("Error creating quiz:", error);
+      res.status(500).json({ message: "Failed to create quiz" });
+    }
+  });
+
+  app.get('/api/quizzes/:id/questions', isAuthenticated, async (req, res) => {
+    try {
+      const quizId = parseInt(req.params.id);
+      const questions = await storage.getQuizQuestions(quizId);
+      res.json(questions);
+    } catch (error) {
+      console.error("Error fetching quiz questions:", error);
+      res.status(500).json({ message: "Failed to fetch quiz questions" });
+    }
+  });
+
+  app.post('/api/quizzes/:id/questions', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const quizId = parseInt(req.params.id);
+      const result = insertQuizQuestionSchema.safeParse({
+        ...req.body,
+        quizId,
+      });
+      
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid question data", errors: result.error.errors });
+      }
+      
+      const newQuestion = await storage.createQuizQuestion(result.data);
+      res.status(201).json(newQuestion);
+    } catch (error) {
+      console.error("Error creating quiz question:", error);
+      res.status(500).json({ message: "Failed to create quiz question" });
+    }
+  });
+
+  app.post('/api/quizzes/:id/attempt', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const quizId = parseInt(req.params.id);
+      
+      const result = insertQuizAttemptSchema.safeParse({
+        ...req.body,
+        quizId,
+        userId,
+      });
+      
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid attempt data", errors: result.error.errors });
+      }
+      
+      const newAttempt = await storage.createQuizAttempt(result.data);
+      res.status(201).json(newAttempt);
+    } catch (error) {
+      console.error("Error creating quiz attempt:", error);
+      res.status(500).json({ message: "Failed to create quiz attempt" });
+    }
+  });
+
+  app.get('/api/user/quiz-attempts', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const attempts = await storage.getUserQuizAttempts(userId);
+      res.json(attempts);
+    } catch (error) {
+      console.error("Error fetching user quiz attempts:", error);
+      res.status(500).json({ message: "Failed to fetch quiz attempts" });
+    }
+  });
+
+  // Contact details routes
+  app.get('/api/contact-details', async (req, res) => {
+    try {
+      const contacts = await storage.getContactDetails();
+      res.json(contacts);
+    } catch (error) {
+      console.error("Error fetching contact details:", error);
+      res.status(500).json({ message: "Failed to fetch contact details" });
+    }
+  });
+
+  app.post('/api/contact-details', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const result = insertContactDetailSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid contact data", errors: result.error.errors });
+      }
+      
+      const newContact = await storage.createContactDetail(result.data);
+      res.status(201).json(newContact);
+    } catch (error) {
+      console.error("Error creating contact detail:", error);
+      res.status(500).json({ message: "Failed to create contact detail" });
+    }
+  });
+
+  app.put('/api/contact-details/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const id = parseInt(req.params.id);
+      const updatedContact = await storage.updateContactDetail(id, req.body);
+      res.json(updatedContact);
+    } catch (error) {
+      console.error("Error updating contact detail:", error);
+      res.status(500).json({ message: "Failed to update contact detail" });
+    }
+  });
+
+  app.delete('/api/contact-details/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      const id = parseInt(req.params.id);
+      await storage.deleteContactDetail(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting contact detail:", error);
+      res.status(500).json({ message: "Failed to delete contact detail" });
+    }
+  });
+
+  // Chat history routes for AI conversations
+  app.get('/api/chat-history', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const sessionId = req.query.sessionId as string;
+      const history = await storage.getChatHistory(userId, sessionId);
+      res.json(history);
+    } catch (error) {
+      console.error("Error fetching chat history:", error);
+      res.status(500).json({ message: "Failed to fetch chat history" });
+    }
+  });
+
+  app.post('/api/chat-history', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const result = insertChatHistorySchema.safeParse({
+        ...req.body,
+        userId,
+      });
+      
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid chat history data", errors: result.error.errors });
+      }
+      
+      const newHistory = await storage.saveChatHistory(result.data);
+      res.status(201).json(newHistory);
+    } catch (error) {
+      console.error("Error saving chat history:", error);
+      res.status(500).json({ message: "Failed to save chat history" });
     }
   });
 

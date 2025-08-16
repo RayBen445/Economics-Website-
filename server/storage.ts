@@ -8,6 +8,14 @@ import {
   documents,
   reports,
   siteSettings,
+  motivationQuotes,
+  privateMessages,
+  eventComments,
+  quizzes,
+  quizQuestions,
+  quizAttempts,
+  contactDetails,
+  chatHistory,
   type User,
   type UpsertUser,
   type Faculty,
@@ -26,6 +34,22 @@ import {
   type InsertReport,
   type SiteSettings,
   type InsertSiteSettings,
+  type MotivationQuote,
+  type InsertMotivationQuote,
+  type PrivateMessage,
+  type InsertPrivateMessage,
+  type EventComment,
+  type InsertEventComment,
+  type Quiz,
+  type InsertQuiz,
+  type QuizQuestion,
+  type InsertQuizQuestion,
+  type QuizAttempt,
+  type InsertQuizAttempt,
+  type ContactDetail,
+  type InsertContactDetail,
+  type ChatHistoryEntry,
+  type InsertChatHistoryEntry,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, like, and, or } from "drizzle-orm";
@@ -84,6 +108,50 @@ export interface IStorage {
   getAdmins(): Promise<User[]>;
   promoteToAdmin(userId: string, level: number): Promise<void>;
   removeAdminRights(userId: string): Promise<void>;
+  
+  // Motivation quotes
+  getMotivationQuotes(): Promise<MotivationQuote[]>;
+  getRandomQuote(): Promise<MotivationQuote | undefined>;
+  createMotivationQuote(quote: InsertMotivationQuote): Promise<MotivationQuote>;
+  updateMotivationQuote(id: number, updates: Partial<MotivationQuote>): Promise<MotivationQuote | undefined>;
+  deleteMotivationQuote(id: number): Promise<void>;
+  
+  // Private messages
+  getPrivateMessages(userId: string): Promise<PrivateMessage[]>;
+  getConversation(user1Id: string, user2Id: string): Promise<PrivateMessage[]>;
+  sendPrivateMessage(message: InsertPrivateMessage): Promise<PrivateMessage>;
+  markMessageAsRead(messageId: number): Promise<void>;
+  
+  // Event comments
+  getEventComments(eventId: number): Promise<EventComment[]>;
+  createEventComment(comment: InsertEventComment): Promise<EventComment>;
+  deleteEventComment(id: number): Promise<void>;
+  
+  // Quiz system
+  getQuizzes(): Promise<Quiz[]>;
+  getQuiz(id: number): Promise<Quiz | undefined>;
+  createQuiz(quiz: InsertQuiz): Promise<Quiz>;
+  updateQuiz(id: number, updates: Partial<Quiz>): Promise<Quiz | undefined>;
+  deleteQuiz(id: number): Promise<void>;
+  
+  getQuizQuestions(quizId: number): Promise<QuizQuestion[]>;
+  createQuizQuestion(question: InsertQuizQuestion): Promise<QuizQuestion>;
+  updateQuizQuestion(id: number, updates: Partial<QuizQuestion>): Promise<QuizQuestion | undefined>;
+  deleteQuizQuestion(id: number): Promise<void>;
+  
+  getQuizAttempts(quizId: number): Promise<QuizAttempt[]>;
+  getUserQuizAttempts(userId: string): Promise<QuizAttempt[]>;
+  createQuizAttempt(attempt: InsertQuizAttempt): Promise<QuizAttempt>;
+  
+  // Contact details
+  getContactDetails(): Promise<ContactDetail[]>;
+  createContactDetail(contact: InsertContactDetail): Promise<ContactDetail>;
+  updateContactDetail(id: number, updates: Partial<ContactDetail>): Promise<ContactDetail | undefined>;
+  deleteContactDetail(id: number): Promise<void>;
+  
+  // Chat history for AI conversations
+  getChatHistory(userId: string, sessionId?: string): Promise<ChatHistoryEntry[]>;
+  saveChatHistory(history: InsertChatHistoryEntry): Promise<ChatHistoryEntry>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -361,6 +429,221 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date(),
       })
       .where(eq(users.id, userId));
+  }
+
+  // Motivation quotes operations
+  async getMotivationQuotes(): Promise<MotivationQuote[]> {
+    return await db
+      .select()
+      .from(motivationQuotes)
+      .where(eq(motivationQuotes.isActive, true))
+      .orderBy(desc(motivationQuotes.createdAt));
+  }
+
+  async getRandomQuote(): Promise<MotivationQuote | undefined> {
+    const quotes = await db
+      .select()
+      .from(motivationQuotes)
+      .where(eq(motivationQuotes.isActive, true));
+    
+    if (quotes.length === 0) return undefined;
+    
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    return quotes[randomIndex];
+  }
+
+  async createMotivationQuote(quoteData: InsertMotivationQuote): Promise<MotivationQuote> {
+    const [newQuote] = await db.insert(motivationQuotes).values(quoteData).returning();
+    return newQuote;
+  }
+
+  async updateMotivationQuote(id: number, updates: Partial<MotivationQuote>): Promise<MotivationQuote | undefined> {
+    const [updated] = await db
+      .update(motivationQuotes)
+      .set(updates)
+      .where(eq(motivationQuotes.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteMotivationQuote(id: number): Promise<void> {
+    await db.delete(motivationQuotes).where(eq(motivationQuotes.id, id));
+  }
+
+  // Private messages operations
+  async getPrivateMessages(userId: string): Promise<PrivateMessage[]> {
+    return await db
+      .select()
+      .from(privateMessages)
+      .where(or(eq(privateMessages.senderId, userId), eq(privateMessages.receiverId, userId)))
+      .orderBy(desc(privateMessages.createdAt));
+  }
+
+  async getConversation(user1Id: string, user2Id: string): Promise<PrivateMessage[]> {
+    return await db
+      .select()
+      .from(privateMessages)
+      .where(
+        or(
+          and(eq(privateMessages.senderId, user1Id), eq(privateMessages.receiverId, user2Id)),
+          and(eq(privateMessages.senderId, user2Id), eq(privateMessages.receiverId, user1Id))
+        )
+      )
+      .orderBy(asc(privateMessages.createdAt));
+  }
+
+  async sendPrivateMessage(messageData: InsertPrivateMessage): Promise<PrivateMessage> {
+    const [newMessage] = await db.insert(privateMessages).values(messageData).returning();
+    return newMessage;
+  }
+
+  async markMessageAsRead(messageId: number): Promise<void> {
+    await db
+      .update(privateMessages)
+      .set({ isRead: true })
+      .where(eq(privateMessages.id, messageId));
+  }
+
+  // Event comments operations
+  async getEventComments(eventId: number): Promise<EventComment[]> {
+    return await db
+      .select()
+      .from(eventComments)
+      .where(eq(eventComments.eventId, eventId))
+      .orderBy(asc(eventComments.createdAt));
+  }
+
+  async createEventComment(commentData: InsertEventComment): Promise<EventComment> {
+    const [newComment] = await db.insert(eventComments).values(commentData).returning();
+    return newComment;
+  }
+
+  async deleteEventComment(id: number): Promise<void> {
+    await db.delete(eventComments).where(eq(eventComments.id, id));
+  }
+
+  // Quiz system operations
+  async getQuizzes(): Promise<Quiz[]> {
+    return await db
+      .select()
+      .from(quizzes)
+      .where(eq(quizzes.isActive, true))
+      .orderBy(desc(quizzes.createdAt));
+  }
+
+  async getQuiz(id: number): Promise<Quiz | undefined> {
+    const [quiz] = await db.select().from(quizzes).where(eq(quizzes.id, id));
+    return quiz;
+  }
+
+  async createQuiz(quizData: InsertQuiz): Promise<Quiz> {
+    const [newQuiz] = await db.insert(quizzes).values(quizData).returning();
+    return newQuiz;
+  }
+
+  async updateQuiz(id: number, updates: Partial<Quiz>): Promise<Quiz | undefined> {
+    const [updated] = await db
+      .update(quizzes)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(quizzes.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteQuiz(id: number): Promise<void> {
+    await db.delete(quizzes).where(eq(quizzes.id, id));
+  }
+
+  async getQuizQuestions(quizId: number): Promise<QuizQuestion[]> {
+    return await db
+      .select()
+      .from(quizQuestions)
+      .where(eq(quizQuestions.quizId, quizId))
+      .orderBy(asc(quizQuestions.createdAt));
+  }
+
+  async createQuizQuestion(questionData: InsertQuizQuestion): Promise<QuizQuestion> {
+    const [newQuestion] = await db.insert(quizQuestions).values(questionData).returning();
+    return newQuestion;
+  }
+
+  async updateQuizQuestion(id: number, updates: Partial<QuizQuestion>): Promise<QuizQuestion | undefined> {
+    const [updated] = await db
+      .update(quizQuestions)
+      .set(updates)
+      .where(eq(quizQuestions.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteQuizQuestion(id: number): Promise<void> {
+    await db.delete(quizQuestions).where(eq(quizQuestions.id, id));
+  }
+
+  async getQuizAttempts(quizId: number): Promise<QuizAttempt[]> {
+    return await db
+      .select()
+      .from(quizAttempts)
+      .where(eq(quizAttempts.quizId, quizId))
+      .orderBy(desc(quizAttempts.completedAt));
+  }
+
+  async getUserQuizAttempts(userId: string): Promise<QuizAttempt[]> {
+    return await db
+      .select()
+      .from(quizAttempts)
+      .where(eq(quizAttempts.userId, userId))
+      .orderBy(desc(quizAttempts.completedAt));
+  }
+
+  async createQuizAttempt(attemptData: InsertQuizAttempt): Promise<QuizAttempt> {
+    const [newAttempt] = await db.insert(quizAttempts).values(attemptData).returning();
+    return newAttempt;
+  }
+
+  // Contact details operations
+  async getContactDetails(): Promise<ContactDetail[]> {
+    return await db
+      .select()
+      .from(contactDetails)
+      .orderBy(asc(contactDetails.order), asc(contactDetails.type));
+  }
+
+  async createContactDetail(contactData: InsertContactDetail): Promise<ContactDetail> {
+    const [newContact] = await db.insert(contactDetails).values(contactData).returning();
+    return newContact;
+  }
+
+  async updateContactDetail(id: number, updates: Partial<ContactDetail>): Promise<ContactDetail | undefined> {
+    const [updated] = await db
+      .update(contactDetails)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(contactDetails.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteContactDetail(id: number): Promise<void> {
+    await db.delete(contactDetails).where(eq(contactDetails.id, id));
+  }
+
+  // Chat history operations
+  async getChatHistory(userId: string, sessionId?: string): Promise<ChatHistoryEntry[]> {
+    let query = db
+      .select()
+      .from(chatHistory)
+      .where(eq(chatHistory.userId, userId));
+
+    if (sessionId) {
+      query = query.where(eq(chatHistory.sessionId, sessionId));
+    }
+
+    return await query.orderBy(asc(chatHistory.createdAt));
+  }
+
+  async saveChatHistory(historyData: InsertChatHistoryEntry): Promise<ChatHistoryEntry> {
+    const [newHistory] = await db.insert(chatHistory).values(historyData).returning();
+    return newHistory;
   }
 }
 

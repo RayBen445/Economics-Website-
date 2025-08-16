@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAUTECH Academic Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'lautech-blue': '#1E40AF',
+                        'lautech-gold': '#F59E0B',
+                        'lautech-light-blue': '#3B82F6',
+                        'lautech-light-gold': '#FCD34D'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- @COMPONENT: Navigation Header -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-10 h-10 bg-lautech-blue rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">L</span>
+                        </div>
+                        <span class="ml-3 text-xl font-semibold text-gray-900">LAUTECH Portal</span>
+                    </div>
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="flex items-center space-x-8">
+                        <a href="#" class="text-gray-700 hover:text-lautech-blue px-3 py-2 text-sm font-medium">Dashboard</a>
+                        <a href="#" class="text-gray-700 hover:text-lautech-blue px-3 py-2 text-sm font-medium">Academics</a>
+                        <a href="#" class="text-gray-700 hover:text-lautech-blue px-3 py-2 text-sm font-medium">Resources</a>
+                        <a href="#" class="text-gray-700 hover:text-lautech-blue px-3 py-2 text-sm font-medium">Events</a>
+                        <a href="#" class="text-gray-700 hover:text-lautech-blue px-3 py-2 text-sm font-medium">Support</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <!-- @COMPONENT: NotificationDropdown -->
+                    <button class="text-gray-400 hover:text-gray-500 relative">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </button>
+                    
+                    <!-- @COMPONENT: UserProfileDropdown -->
+                    <div class="relative">
+                        <button class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-lautech-blue" data-mock="true">
+                            <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Profile" />
+                            <span class="ml-2 text-gray-700 font-medium" data-bind="user.name">John Doe</span>
+                            <i class="fas fa-chevron-down ml-1 text-gray-400 text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <button class="md:hidden text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: Navigation Header -->
+
+    <div class="flex min-h-screen">
+        <!-- @COMPONENT: Sidebar Navigation -->
+        <aside class="hidden lg:flex lg:flex-shrink-0">
+            <div class="flex flex-col w-64 bg-white border-r border-gray-200">
+                <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+                    <div class="flex-1 px-3 space-y-1">
+                        <!-- @STATE: activeTab:string = 'dashboard' -->
+                        <a href="#dashboard" class="bg-lautech-blue text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-home mr-3"></i>
+                            Dashboard
+                        </a>
+                        <a href="#profile" class="text-gray-700 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-user mr-3"></i>
+                            My Profile
+                        </a>
+                        <a href="#academics" class="text-gray-700 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-graduation-cap mr-3"></i>
+                            Academics
+                        </a>
+                        <a href="#faculty" class="text-gray-700 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-users mr-3"></i>
+                            Faculty Directory
+                        </a>
+                        <a href="#resources" class="text-gray-700 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-book mr-3"></i>
+                            Resources
+                        </a>
+                        <a href="#chat" class="text-gray-700 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-comments mr-3"></i>
+                            Chat Rooms
+                            <span class="ml-auto bg-lautech-gold text-white text-xs rounded-full px-2 py-1">5</span>
+                        </a>
+                        <a href="#events" class="text-gray-700 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-calendar mr-3"></i>
+                            Events
+                        </a>
+                        <a href="#news" class="text-gray-700 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-newspaper mr-3"></i>
+                            News & Updates
+                        </a>
+                    </div>
+                    
+                    <!-- Admin Section -->
+                    <div class="border-t border-gray-200 pt-4 px-3">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Administration</p>
+                        <a href="#admin" class="text-gray-700 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-cog mr-3"></i>
+                            Admin Panel
+                        </a>
+                        <a href="#users" class="text-gray-700 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-users-cog mr-3"></i>
+                            User Management
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: Sidebar Navigation -->
+
+        <!-- @COMPONENT: Main Content Area -->
+        <main class="flex-1 overflow-x-hidden">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Welcome back, <span data-bind="user.firstName" data-mock="true">John</span>!</h1>
+                    <p class="mt-2 text-gray-600">Here's what's happening at LAUTECH today</p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-lautech-blue bg-opacity-10 rounded-lg">
+                                <i class="fas fa-book-open text-lautech-blue text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Active Courses</p>
+                                <p class="text-2xl font-semibold text-gray-900" data-bind="stats.activeCourses" data-mock="true">6</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-lautech-gold bg-opacity-10 rounded-lg">
+                                <i class="fas fa-calendar-check text-lautech-gold text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Upcoming Events</p>
+                                <p class="text-2xl font-semibold text-gray-900" data-bind="stats.upcomingEvents" data-mock="true">12</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-green-100 rounded-lg">
+                                <i class="fas fa-users text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Online Users</p>
+                                <p class="text-2xl font-semibold text-gray-900" data-bind="stats.onlineUsers" data-mock="true">247</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-purple-100 rounded-lg">
+                                <i class="fas fa-download text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Downloads</p>
+                                <p class="text-2xl font-semibold text-gray-900" data-bind="stats.downloads" data-mock="true">1,234</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Recent Activity Feed -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="text-xl font-semibold text-gray-900">Recent Activity</h2>
+                            </div>
+                            <div class="p-6">
+                                <!-- @MAP: activities.map(activity => ( -->
+                                <div class="flex items-start space-x-3 mb-6 last:mb-0">
+                                    <!-- Campus landscape showing diverse group of economics students studying outdoors -->
+                                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="Student activity" class="w-10 h-10 rounded-full object-cover" data-mock-image="true" />
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900" data-mock="true">
+                                            <span class="font-medium" data-bind="activity.user.name">Dr. Sarah Johnson</span> uploaded a new lecture material for 
+                                            <span class="font-medium text-lautech-blue" data-bind="activity.course.name">Advanced Microeconomics</span>
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1" data-bind="activity.timestamp" data-mock="true">2 hours ago</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-3 mb-6 last:mb-0">
+                                    <!-- Group of economics students in a modern university study room with laptops and textbooks -->
+                                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="Student group" class="w-10 h-10 rounded-full object-cover" data-mock-image="true" />
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900" data-mock="true">
+                                            New discussion started in <span class="font-medium text-lautech-blue">Economics Study Group</span> by 
+                                            <span class="font-medium">Alex Chen</span>
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1" data-mock="true">4 hours ago</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-3">
+                                    <!-- Academic conference hall with speakers presenting to an audience of students and faculty -->
+                                    <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="Conference" class="w-10 h-10 rounded-full object-cover" data-mock-image="true" />
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900" data-mock="true">
+                                            <span class="font-medium">Event Reminder:</span> Annual Economics Conference starts tomorrow at 9:00 AM
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1" data-mock="true">6 hours ago</p>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions & Announcements -->
+                    <div class="space-y-6">
+                        <!-- Quick Actions -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                            <div class="space-y-3">
+                                <button class="w-full flex items-center justify-between p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50" data-event="click:handleFileUpload">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-upload text-lautech-blue mr-3"></i>
+                                        <span class="text-sm font-medium text-gray-900">Upload Document</span>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                                </button>
+                                
+                                <button class="w-full flex items-center justify-between p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50" data-event="click:openChat">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-comments text-lautech-gold mr-3"></i>
+                                        <span class="text-sm font-medium text-gray-900">Join Study Group</span>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                                </button>
+                                
+                                <button class="w-full flex items-center justify-between p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50" data-event="click:createEvent">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-plus-circle text-green-600 mr-3"></i>
+                                        <span class="text-sm font-medium text-gray-900">Create Event</span>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Latest Announcements -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Announcements</h3>
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-lautech-gold pl-4" data-mock="true">
+                                    <h4 class="text-sm font-medium text-gray-900">Library Hours Extended</h4>
+                                    <p class="text-xs text-gray-600 mt-1">The main library will be open 24/7 during finals week.</p>
+                                    <p class="text-xs text-gray-500 mt-2">2 days ago</p>
+                                </div>
+                                
+                                <div class="border-l-4 border-lautech-blue pl-4" data-mock="true">
+                                    <h4 class="text-sm font-medium text-gray-900">New AI Study Assistant</h4>
+                                    <p class="text-xs text-gray-600 mt-1">Try our new AI-powered study companion for personalized help.</p>
+                                    <p class="text-xs text-gray-500 mt-2">5 days ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- @COMPONENT: Chat Interface (Hidden by default, shown when chat is active) -->
+            <div id="chat-interface" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50">
+                <div class="flex h-full">
+                    <div class="w-80 bg-white border-r border-gray-200">
+                        <div class="p-4 border-b border-gray-200">
+                            <h2 class="text-lg font-semibold text-gray-900">Chat Rooms</h2>
+                            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600" data-event="click:closeChat">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="overflow-y-auto h-full pb-20">
+                            <!-- @MAP: chatRooms.map(room => ( -->
+                            <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100" data-mock="true">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-medium text-gray-900" data-bind="room.name">Economics Study Group</h3>
+                                    <span class="text-xs text-gray-500" data-bind="room.lastMessage.time">2m</span>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-1" data-bind="room.lastMessage.preview">Anyone ready for tomorrow's exam?</p>
+                                <div class="flex justify-between items-center mt-2">
+                                    <span class="text-xs text-gray-400" data-bind="room.memberCount">24 members</span>
+                                    <span class="bg-lautech-blue text-white text-xs rounded-full px-2 py-1" data-bind="room.unreadCount">3</span>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Messages Area -->
+                    <div class="flex-1 flex flex-col">
+                        <div class="p-4 border-b border-gray-200 bg-white">
+                            <h3 class="text-lg font-medium text-gray-900" data-bind="activeRoom.name" data-mock="true">Economics Study Group</h3>
+                            <p class="text-sm text-gray-500" data-bind="activeRoom.memberCount" data-mock="true">24 members online</p>
+                        </div>
+                        
+                        <div class="flex-1 overflow-y-auto p-4 bg-gray-50">
+                            <!-- @MAP: messages.map(message => ( -->
+                            <div class="mb-4 flex items-start space-x-3" data-mock="true">
+                                <!-- Student studying with books and laptop in university setting -->
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="User avatar" class="w-8 h-8 rounded-full" data-mock-image="true" />
+                                <div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm font-medium text-gray-900" data-bind="message.user.name">Sarah Johnson</span>
+                                        <span class="text-xs text-gray-500" data-bind="message.timestamp">10:30 AM</span>
+                                    </div>
+                                    <p class="text-sm text-gray-700 mt-1" data-bind="message.content">Has anyone finished reading Chapter 5? I'm struggling with the market equilibrium concepts.</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                        
+                        <div class="p-4 bg-white border-t border-gray-200">
+                            <div class="flex space-x-3">
+                                <input type="text" placeholder="Type your message..." class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-lautech-blue focus:border-transparent" data-bind="chatInput" />
+                                <button class="bg-lautech-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700" data-event="click:sendMessage">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Chat Interface -->
+
+            <!-- @COMPONENT: File Upload Modal -->
+            <div id="upload-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl max-w-md w-full p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Upload Document</h3>
+                        <button class="text-gray-400 hover:text-gray-600" data-event="click:closeUploadModal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center mb-4">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                        <p class="text-sm text-gray-600 mb-2">Drag and drop your file here, or</p>
+                        <button class="text-lautech-blue font-medium text-sm hover:underline" data-implementation="Should open file picker dialog">Browse Files</button>
+                        <!-- @FUNCTIONALITY: This should integrate with the file upload system to handle PDF and document uploads -->
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Document Title</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-lautech-blue focus:border-transparent" placeholder="Enter document title" />
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                            <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-lautech-blue focus:border-transparent">
+                                <option>Select category</option>
+                                <option>Lecture Notes</option>
+                                <option>Assignment</option>
+                                <option>Research Paper</option>
+                                <option>Study Material</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md text-sm font-medium hover:bg-gray-300" data-event="click:closeUploadModal">Cancel</button>
+                            <button class="flex-1 bg-lautech-blue text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700" data-event="click:handleUpload" data-implementation="Should validate form and upload file">Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: File Upload Modal -->
+
+            <!-- @COMPONENT: Admin Panel Section -->
+            <div id="admin-panel" class="hidden px-4 sm:px-6 lg:px-8 py-8">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Admin Panel</h1>
+                    <p class="mt-2 text-gray-600">Manage users, content, and system settings</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- User Management -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                                <h2 class="text-xl font-semibold text-gray-900">User Management</h2>
+                                <button class="bg-lautech-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+                                    <i class="fas fa-plus mr-2"></i>Add User
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full">
+                                        <thead>
+                                            <tr class="border-b border-gray-200">
+                                                <th class="text-left py-3 text-sm font-medium text-gray-900">User</th>
+                                                <th class="text-left py-3 text-sm font-medium text-gray-900">Role</th>
+                                                <th class="text-left py-3 text-sm font-medium text-gray-900">Status</th>
+                                                <th class="text-left py-3 text-sm font-medium text-gray-900">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100">
+                                            <!-- @MAP: users.map(user => ( -->
+                                            <tr data-mock="true">
+                                                <td class="py-4">
+                                                    <div class="flex items-center">
+                                                        <!-- University student portrait in academic setting -->
+                                                        <img src="https://pixabay.com/get/g103b7d31442440e1a51302f2ed50c13be100f634616a75416e534c0286baa2cc6fa2f903786453bc223194403e746ff1538918c768ebbecbd9d755174ecec541_1280.jpg" alt="User" class="w-8 h-8 rounded-full mr-3" data-mock-image="true" />
+                                                        <div>
+                                                            <p class="text-sm font-medium text-gray-900" data-bind="user.name">Jane Smith</p>
+                                                            <p class="text-xs text-gray-500" data-bind="user.email">jane.smith@lautech.edu</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="py-4">
+                                                    <span class="inline-flex px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full" data-bind="user.role">Student</span>
+                                                </td>
+                                                <td class="py-4">
+                                                    <span class="inline-flex px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full" data-bind="user.status">Active</span>
+                                                </td>
+                                                <td class="py-4">
+                                                    <div class="flex space-x-2">
+                                                        <button class="text-lautech-blue hover:text-blue-700 text-sm" data-event="click:editUser">Edit</button>
+                                                        <button class="text-red-600 hover:text-red-700 text-sm" data-event="click:suspendUser">Suspend</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!-- @END_MAP )) -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Stats -->
+                    <div>
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">System Overview</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Total Users</span>
+                                    <span class="text-sm font-medium text-gray-900" data-bind="systemStats.totalUsers" data-mock="true">1,247</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Active Sessions</span>
+                                    <span class="text-sm font-medium text-gray-900" data-bind="systemStats.activeSessions" data-mock="true">89</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Documents</span>
+                                    <span class="text-sm font-medium text-gray-900" data-bind="systemStats.documents" data-mock="true">3,456</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Storage Used</span>
+                                    <span class="text-sm font-medium text-gray-900" data-bind="systemStats.storageUsed" data-mock="true">2.4 GB</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Actions -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Admin Actions</h3>
+                            <div class="space-y-3">
+                                <div class="text-sm" data-mock="true">
+                                    <p class="text-gray-900">User <span class="font-medium">john.doe@lautech.edu</span> suspended</p>
+                                    <p class="text-xs text-gray-500">2 hours ago</p>
+                                </div>
+                                <div class="text-sm" data-mock="true">
+                                    <p class="text-gray-900">New course created: <span class="font-medium">Advanced Statistics</span></p>
+                                    <p class="text-xs text-gray-500">5 hours ago</p>
+                                </div>
+                                <div class="text-sm" data-mock="true">
+                                    <p class="text-gray-900">System backup completed</p>
+                                    <p class="text-xs text-gray-500">1 day ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Admin Panel Section -->
+
+        </main>
+        <!-- @END_COMPONENT: Main Content Area -->
+    </div>
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-2">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 bg-lautech-blue rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold">L</span>
+                        </div>
+                        <span class="text-lg font-semibold text-gray-900">LAUTECH Portal</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4">Empowering academic excellence through innovative digital solutions for the LAUTECH community.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-lautech-blue">
+                            <i class="fab fa-twitter text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-lautech-blue">
+                            <i class="fab fa-facebook text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-lautech-blue">
+                            <i class="fab fa-linkedin text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-lautech-blue">
+                            <i class="fab fa-telegram text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-900 mb-3">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-lautech-blue">Academic Calendar</a></li>
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-lautech-blue">Course Catalog</a></li>
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-lautech-blue">Faculty Directory</a></li>
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-lautech-blue">Student Services</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-900 mb-3">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-lautech-blue">Help Center</a></li>
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-lautech-blue">Contact Support</a></li>
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-lautech-blue">Report Issue</a></li>
+                        <li><a href="#" class="text-sm text-gray-600 hover:text-lautech-blue">Telegram Bot</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500">© 2024 LAUTECH Academic Portal. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-sm text-gray-500 hover:text-lautech-blue">Privacy Policy</a>
+                    <a href="#" class="text-sm text-gray-500 hover:text-lautech-blue">Terms of Service</a>
+                    <a href="#" class="text-sm text-gray-500 hover:text-lautech-blue">Accessibility</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <!-- JavaScript for Demo Interactions -->
+    <script>
+        (function() {
+            // TODO: Implement business logic, API calls, and state management
+            
+            // Demo navigation and modal functionality
+            const chatButtons = document.querySelectorAll('[data-event="click:openChat"]');
+            const chatInterface = document.getElementById('chat-interface');
+            const closeChatButtons = document.querySelectorAll('[data-event="click:closeChat"]');
+            
+            const uploadButtons = document.querySelectorAll('[data-event="click:handleFileUpload"]');
+            const uploadModal = document.getElementById('upload-modal');
+            const closeUploadButtons = document.querySelectorAll('[data-event="click:closeUploadModal"]');
+
+            // Chat interface toggle
+            chatButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    chatInterface.classList.remove('hidden');
+                });
+            });
+
+            closeChatButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    chatInterface.classList.add('hidden');
+                });
+            });
+
+            // Upload modal toggle
+            uploadButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    uploadModal.classList.remove('hidden');
+                });
+            });
+
+            closeUploadButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    uploadModal.classList.add('hidden');
+                });
+            });
+
+            // Mobile menu toggle
+            const mobileMenuButton = document.querySelector('.md\\:hidden button');
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // TODO: Implement mobile menu toggle
+                    console.log('Mobile menu toggle clicked');
+                });
+            }
+
+            // Navigation active state management
+            const navLinks = document.querySelectorAll('aside a[href^="#"]');
+            const sections = document.querySelectorAll('main > div[id]');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    
+                    // Hide all sections
+                    sections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+                    
+                    // Show target section
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.classList.remove('hidden');
+                    } else {
+                        // Show dashboard by default
+                        document.getElementById('dashboard').classList.remove('hidden');
+                    }
+                    
+                    // Update active nav state
+                    navLinks.forEach(navLink => {
+                        navLink.classList.remove('bg-lautech-blue', 'text-white');
+                        navLink.classList.add('text-gray-700', 'hover:bg-gray-50');
+                    });
+                    
+                    link.classList.add('bg-lautech-blue', 'text-white');
+                    link.classList.remove('text-gray-700', 'hover:bg-gray-50');
+                });
+            });
+
+            // Close modals on background click
+            [chatInterface, uploadModal].forEach(modal => {
+                if (modal) {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+
+        })();
+    </script>
+</body>
+</html>

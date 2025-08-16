@@ -1,0 +1,738 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAUTECH Academic Portal - Excellence in Education</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'lautech-blue': {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a'
+                        },
+                        'lautech-gold': {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/heroicons@2.0.16/24/outline/index.js" type="module"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+        .gold-accent { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+        .glass-effect { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
+        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15); }
+        .admin-badge { background: linear-gradient(45deg, #10b981, #059669); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- @COMPONENT: NavigationHeader -->
+    <header class="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-10 h-10 bg-lautech-blue-700 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">L</span>
+                        </div>
+                        <div class="ml-3">
+                            <h1 class="text-xl font-semibold text-gray-900">LAUTECH Portal</h1>
+                            <p class="text-xs text-gray-600">Academic Excellence</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#dashboard" class="text-gray-700 hover:text-lautech-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>
+                    <a href="#faculty" class="text-gray-700 hover:text-lautech-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Faculty</a>
+                    <a href="#resources" class="text-gray-700 hover:text-lautech-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Resources</a>
+                    <a href="#events" class="text-gray-700 hover:text-lautech-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Events</a>
+                    <a href="#chat" class="text-gray-700 hover:text-lautech-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Chat</a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <!-- @FUNCTIONALITY: Notification system with real-time updates -->
+                    <button class="p-2 text-gray-600 hover:text-lautech-blue-600 transition-colors relative">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="absolute -top-1 -right-1 bg-lautech-gold-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">3</span>
+                    </button>
+                    
+                    <!-- @COMPONENT: UserProfile -->
+                    <div class="flex items-center space-x-3">
+                        <span class="admin-badge text-white px-2 py-1 rounded-full text-xs font-medium">Admin</span>
+                        <div class="w-8 h-8 bg-lautech-blue-600 rounded-full flex items-center justify-center">
+                            <span class="text-white text-sm font-medium" data-bind="user.initials">OH</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: NavigationHeader -->
+
+    <!-- @COMPONENT: HeroSection -->
+    <section class="hero-gradient relative overflow-hidden py-16 lg:py-24">
+        <div class="absolute inset-0 opacity-10">
+            <!-- A panoramic view of a modern university campus with students walking -->
+            <img src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&h=1080" alt="University campus" class="w-full h-full object-cover" />
+        </div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+                    Welcome to <span class="text-lautech-gold-400">LAUTECH</span><br>Academic Portal
+                </h1>
+                <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                    Your comprehensive platform for academic excellence, collaboration, and innovation in higher education.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="glass-effect text-lautech-blue-700 px-8 py-3 rounded-lg font-semibold hover:bg-white transition-all duration-300 hover-lift" data-event="click:navigateToResources">
+                        Explore Resources
+                    </button>
+                    <button class="bg-lautech-gold-500 hover:bg-lautech-gold-600 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover-lift" data-event="click:openChat">
+                        Join Discussion
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HeroSection -->
+
+    <!-- @COMPONENT: QuickStats -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- @MAP: quickStats.map(stat => ( -->
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-lautech-blue-700" data-bind="stat.value">1,247</div>
+                    <div class="text-gray-600 mt-1" data-bind="stat.label">Active Students</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-lautech-blue-700">156</div>
+                    <div class="text-gray-600 mt-1">Faculty Members</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-lautech-blue-700">2,834</div>
+                    <div class="text-gray-600 mt-1">Resources Shared</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-lautech-blue-700">89</div>
+                    <div class="text-gray-600 mt-1">Active Courses</div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: QuickStats -->
+
+    <!-- @COMPONENT: MainDashboard -->
+    <section class="py-16 bg-gray-50" id="dashboard">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Academic Dashboard</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Access all your academic tools and resources from one centralized location</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Main Content Area -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover-lift">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-semibold text-gray-900">Recent Activity</h3>
+                            <span class="text-sm text-gray-500">Last 7 days</span>
+                        </div>
+                        
+                        <!-- @MAP: recentActivities.map(activity => ( -->
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg" data-mock="true">
+                                <div class="w-10 h-10 bg-lautech-blue-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-lautech-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-900"><span class="font-medium">Dr. Adeyemi</span> uploaded new research paper</p>
+                                    <p class="text-xs text-gray-500">2 hours ago</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg" data-mock="true">
+                                <div class="w-10 h-10 bg-lautech-gold-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-lautech-gold-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-900">New discussion started in <span class="font-medium">Economics Study Group</span></p>
+                                    <p class="text-xs text-gray-500">4 hours ago</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg" data-mock="true">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-900">Academic Conference scheduled for <span class="font-medium">March 15th</span></p>
+                                    <p class="text-xs text-gray-500">1 day ago</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+
+                    <!-- Document Library -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover-lift">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-semibold text-gray-900">Document Library</h3>
+                            <button class="bg-lautech-blue-600 hover:bg-lautech-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-event="click:uploadDocument">
+                                Upload Document
+                            </button>
+                        </div>
+                        
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <!-- @MAP: documents.map(doc => ( -->
+                            <div class="border border-gray-200 rounded-lg p-4 hover:border-lautech-blue-300 transition-colors cursor-pointer" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">Economics Research Paper</p>
+                                        <p class="text-xs text-gray-500">PDF • 2.4 MB</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="border border-gray-200 rounded-lg p-4 hover:border-lautech-blue-300 transition-colors cursor-pointer" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">Course Syllabus 2024</p>
+                                        <p class="text-xs text-gray-500">PDF • 1.2 MB</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-8">
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover-lift">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="w-full text-left p-3 bg-lautech-blue-50 hover:bg-lautech-blue-100 rounded-lg transition-colors" data-event="click:createPost">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-lautech-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    <span class="text-sm font-medium text-gray-700">Create Post</span>
+                                </div>
+                            </button>
+                            
+                            <button class="w-full text-left p-3 bg-lautech-gold-50 hover:bg-lautech-gold-100 rounded-lg transition-colors" data-event="click:scheduleEvent">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-lautech-gold-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span class="text-sm font-medium text-gray-700">Schedule Event</span>
+                                </div>
+                            </button>
+                            
+                            <button class="w-full text-left p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors" data-event="click:manageUsers">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
+                                    </svg>
+                                    <span class="text-sm font-medium text-gray-700">Manage Users</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Online Users -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover-lift">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Online Now</h3>
+                        <div class="space-y-3">
+                            <!-- @MAP: onlineUsers.map(user => ( -->
+                            <div class="flex items-center space-x-3" data-mock="true">
+                                <div class="w-8 h-8 bg-lautech-blue-600 rounded-full flex items-center justify-center relative">
+                                    <span class="text-white text-xs font-medium">JD</span>
+                                    <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">John Doe</p>
+                                    <p class="text-xs text-gray-500">Economics Dept.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3" data-mock="true">
+                                <div class="w-8 h-8 bg-lautech-gold-500 rounded-full flex items-center justify-center relative">
+                                    <span class="text-white text-xs font-medium">SA</span>
+                                    <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">Sarah Adams</p>
+                                    <p class="text-xs text-gray-500">Computer Science</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: MainDashboard -->
+
+    <!-- @COMPONENT: FacultySection -->
+    <section class="py-16 bg-white" id="faculty">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Faculty Directory</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Meet our distinguished faculty members and explore their expertise</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- @MAP: facultyMembers.map(member => ( -->
+                <div class="bg-white border border-gray-200 rounded-xl shadow-lg p-6 hover-lift" data-mock="true">
+                    <div class="text-center">
+                        <!-- Professional headshot of a university professor in academic setting -->
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300" alt="Dr. Michael Johnson" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover" />
+                        <h3 class="text-lg font-semibold text-gray-900">Dr. Michael Johnson</h3>
+                        <p class="text-sm text-lautech-blue-600 mb-2">Professor of Economics</p>
+                        <p class="text-xs text-gray-600 mb-4">PhD Economics, Harvard University</p>
+                        <div class="flex flex-wrap gap-2 justify-center mb-4">
+                            <span class="px-2 py-1 bg-lautech-blue-100 text-lautech-blue-800 text-xs rounded-full">Macroeconomics</span>
+                            <span class="px-2 py-1 bg-lautech-gold-100 text-lautech-gold-800 text-xs rounded-full">Research</span>
+                        </div>
+                        <button class="w-full bg-lautech-blue-600 hover:bg-lautech-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-event="click:viewProfile">
+                            View Profile
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white border border-gray-200 rounded-xl shadow-lg p-6 hover-lift" data-mock="true">
+                    <div class="text-center">
+                        <!-- Professional headshot of a female university professor -->
+                        <img src="https://pixabay.com/get/g31492b08c111e07b6bf9d51702f8f384598306e044a591a3302253f36bcfb7949a233726146388b88a6795c4b39b4da0d0e9e614706f0a15e279218da4d6a58c_1280.jpg" alt="Dr. Patricia Williams" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover" />
+                        <h3 class="text-lg font-semibold text-gray-900">Dr. Patricia Williams</h3>
+                        <p class="text-sm text-lautech-blue-600 mb-2">Associate Professor</p>
+                        <p class="text-xs text-gray-600 mb-4">PhD Computer Science, MIT</p>
+                        <div class="flex flex-wrap gap-2 justify-center mb-4">
+                            <span class="px-2 py-1 bg-lautech-blue-100 text-lautech-blue-800 text-xs rounded-full">AI & ML</span>
+                            <span class="px-2 py-1 bg-lautech-gold-100 text-lautech-gold-800 text-xs rounded-full">Data Science</span>
+                        </div>
+                        <button class="w-full bg-lautech-blue-600 hover:bg-lautech-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-event="click:viewProfile">
+                            View Profile
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white border border-gray-200 rounded-xl shadow-lg p-6 hover-lift" data-mock="true">
+                    <div class="text-center">
+                        <!-- Professional headshot of a university professor in academic attire -->
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300" alt="Dr. Robert Chen" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover" />
+                        <h3 class="text-lg font-semibold text-gray-900">Dr. Robert Chen</h3>
+                        <p class="text-sm text-lautech-blue-600 mb-2">Department Head</p>
+                        <p class="text-xs text-gray-600 mb-4">PhD Engineering, Stanford</p>
+                        <div class="flex flex-wrap gap-2 justify-center mb-4">
+                            <span class="px-2 py-1 bg-lautech-blue-100 text-lautech-blue-800 text-xs rounded-full">Engineering</span>
+                            <span class="px-2 py-1 bg-lautech-gold-100 text-lautech-gold-800 text-xs rounded-full">Leadership</span>
+                        </div>
+                        <button class="w-full bg-lautech-blue-600 hover:bg-lautech-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-event="click:viewProfile">
+                            View Profile
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: FacultySection -->
+
+    <!-- @COMPONENT: StudyResourcesSection -->
+    <section class="py-16 bg-gray-50" id="resources">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Study Resources</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Access comprehensive learning materials and collaborative study environments</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift">
+                    <!-- Group of economics students collaborating in a modern study environment -->
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400" alt="Students studying together" class="w-full h-48 object-cover" />
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Study Groups</h3>
+                        <p class="text-gray-600 mb-4">Join collaborative study sessions with your peers and enhance your learning experience through group discussions.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-lautech-blue-600 font-medium">12 Active Groups</span>
+                            <button class="bg-lautech-blue-600 hover:bg-lautech-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-event="click:joinStudyGroup">
+                                Join Group
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift">
+                    <!-- University library with rows of academic books and study materials -->
+                    <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400" alt="Library books and resources" class="w-full h-48 object-cover" />
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Digital Library</h3>
+                        <p class="text-gray-600 mb-4">Access thousands of academic papers, textbooks, and research materials from our comprehensive digital collection.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-lautech-blue-600 font-medium">2,834 Resources</span>
+                            <button class="bg-lautech-blue-600 hover:bg-lautech-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" data-event="click:browseLibrary">
+                                Browse Library
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Categories -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- @MAP: courseCategories.map(category => ( -->
+                <div class="bg-white rounded-lg shadow-md p-6 hover-lift text-center" data-mock="true">
+                    <div class="w-16 h-16 bg-lautech-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-lautech-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Economics</h3>
+                    <p class="text-sm text-gray-600 mb-4">15 Courses Available</p>
+                    <button class="text-lautech-blue-600 hover:text-lautech-blue-700 text-sm font-medium" data-event="click:viewCourses">View Courses →</button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 hover-lift text-center" data-mock="true">
+                    <div class="w-16 h-16 bg-lautech-gold-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-lautech-gold-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Computer Science</h3>
+                    <p class="text-sm text-gray-600 mb-4">23 Courses Available</p>
+                    <button class="text-lautech-blue-600 hover:text-lautech-blue-700 text-sm font-medium" data-event="click:viewCourses">View Courses →</button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 hover-lift text-center" data-mock="true">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Engineering</h3>
+                    <p class="text-sm text-gray-600 mb-4">18 Courses Available</p>
+                    <button class="text-lautech-blue-600 hover:text-lautech-blue-700 text-sm font-medium" data-event="click:viewCourses">View Courses →</button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 hover-lift text-center" data-mock="true">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Liberal Arts</h3>
+                    <p class="text-sm text-gray-600 mb-4">12 Courses Available</p>
+                    <button class="text-lautech-blue-600 hover:text-lautech-blue-700 text-sm font-medium" data-event="click:viewCourses">View Courses →</button>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: StudyResourcesSection -->
+
+    <!-- @COMPONENT: EventsSection -->
+    <section class="py-16 bg-white" id="events">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Upcoming Events</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Stay updated with the latest academic conferences, seminars, and university events</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Featured Event -->
+                <div class="bg-gradient-to-br from-lautech-blue-600 to-lautech-blue-800 rounded-xl shadow-lg overflow-hidden hover-lift">
+                    <!-- Academic conference with speakers presenting to an audience -->
+                    <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=400" alt="Academic conference presentation" class="w-full h-48 object-cover opacity-90" />
+                    <div class="p-6 text-white">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <span class="bg-lautech-gold-500 text-white px-3 py-1 rounded-full text-sm font-medium">Featured</span>
+                            <span class="text-blue-200 text-sm">March 15, 2024</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Annual Academic Conference 2024</h3>
+                        <p class="text-blue-100 mb-4">Join leading researchers and academics for three days of groundbreaking presentations, networking, and collaborative discussions on the future of education.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 text-sm text-blue-200">
+                                <span>🕒 9:00 AM - 5:00 PM</span>
+                                <span>📍 Main Auditorium</span>
+                            </div>
+                            <button class="bg-white text-lautech-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors" data-event="click:registerEvent">
+                                Register
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event List -->
+                <div class="space-y-4">
+                    <!-- @MAP: upcomingEvents.map(event => ( -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:border-lautech-blue-300 transition-colors hover-lift" data-mock="true">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-3 h-3 bg-lautech-blue-500 rounded-full"></div>
+                                    <span class="text-sm text-gray-500">March 22, 2024</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-1">Economics Research Symposium</h4>
+                                <p class="text-gray-600 text-sm mb-3">Exploring modern economic theories and their practical applications in today's global market.</p>
+                                <div class="flex items-center text-xs text-gray-500 space-x-4">
+                                    <span>🕒 2:00 PM - 6:00 PM</span>
+                                    <span>📍 Economics Hall</span>
+                                </div>
+                            </div>
+                            <button class="ml-4 text-lautech-blue-600 hover:text-lautech-blue-700 text-sm font-medium" data-event="click:viewEvent">View Details</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:border-lautech-blue-300 transition-colors hover-lift" data-mock="true">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-3 h-3 bg-lautech-gold-500 rounded-full"></div>
+                                    <span class="text-sm text-gray-500">March 28, 2024</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-1">Tech Innovation Workshop</h4>
+                                <p class="text-gray-600 text-sm mb-3">Hands-on workshop covering the latest developments in AI, machine learning, and data science.</p>
+                                <div class="flex items-center text-xs text-gray-500 space-x-4">
+                                    <span>🕒 10:00 AM - 4:00 PM</span>
+                                    <span>📍 Computer Lab 1</span>
+                                </div>
+                            </div>
+                            <button class="ml-4 text-lautech-blue-600 hover:text-lautech-blue-700 text-sm font-medium" data-event="click:viewEvent">View Details</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:border-lautech-blue-300 transition-colors hover-lift" data-mock="true">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="text-sm text-gray-500">April 5, 2024</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-1">Student Orientation Day</h4>
+                                <p class="text-gray-600 text-sm mb-3">Welcome event for new students with campus tours, registration assistance, and meet & greet sessions.</p>
+                                <div class="flex items-center text-xs text-gray-500 space-x-4">
+                                    <span>🕒 9:00 AM - 3:00 PM</span>
+                                    <span>📍 Student Center</span>
+                                </div>
+                            </div>
+                            <button class="ml-4 text-lautech-blue-600 hover:text-lautech-blue-700 text-sm font-medium" data-event="click:viewEvent">View Details</button>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: EventsSection -->
+
+    <!-- @COMPONENT: ChatSection -->
+    <section class="py-16 bg-gray-50" id="chat">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Community Chat</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Connect and collaborate with fellow students and faculty members in real-time</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="bg-lautech-blue-600 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-white">General Discussion</h3>
+                        <div class="flex items-center space-x-2 text-blue-100">
+                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span class="text-sm">24 online</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @STATE: messages:array = [] -->
+                <!-- @FUNCTIONALITY: Real-time chat implementation using WebSocket or similar -->
+                <div class="h-96 overflow-y-auto p-6 space-y-4" data-implementation="Implement real-time chat with message history">
+                    <!-- @MAP: messages.map(message => ( -->
+                    <div class="flex items-start space-x-3" data-mock="true">
+                        <div class="w-8 h-8 bg-lautech-blue-600 rounded-full flex items-center justify-center">
+                            <span class="text-white text-xs font-medium">AD</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-sm font-medium text-gray-900">Dr. Adeyemi</span>
+                                <span class="text-xs text-gray-500">2:30 PM</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-700">
+                                Welcome everyone! Looking forward to our upcoming research symposium. Don't forget to submit your abstracts by Friday.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3" data-mock="true">
+                        <div class="w-8 h-8 bg-lautech-gold-500 rounded-full flex items-center justify-center">
+                            <span class="text-white text-xs font-medium">JD</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-sm font-medium text-gray-900">John Doe</span>
+                                <span class="text-xs text-gray-500">2:32 PM</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-700">
+                                Thanks for the reminder! I've been working on my research about sustainable economic models. Excited to present!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3" data-mock="true">
+                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <span class="text-white text-xs font-medium">SA</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-sm font-medium text-gray-900">Sarah Adams</span>
+                                <span class="text-xs text-gray-500">2:35 PM</span>
+                            </div>
+                            <div class="bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-700">
+                                Great to see such engagement! I'll be presenting on AI applications in education. Looking forward to the discussion.
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+
+                <div class="border-t border-gray-200 p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-lautech-blue-600 rounded-full flex items-center justify-center">
+                            <span class="text-white text-xs font-medium" data-bind="currentUser.initials">OH</span>
+                        </div>
+                        <div class="flex-1">
+                            <input type="text" placeholder="Type your message..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lautech-blue-500 focus:border-lautech-blue-500" data-event="keypress:sendMessage" />
+                        </div>
+                        <button class="bg-lautech-blue-600 hover:bg-lautech-blue-700 text-white p-2 rounded-lg transition-colors" data-event="click:sendMessage">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ChatSection -->
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-lautech-blue-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 bg-lautech-gold-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold">L</span>
+                        </div>
+                        <span class="ml-2 text-xl font-semibold">LAUTECH</span>
+                    </div>
+                    <p class="text-blue-200 text-sm">Excellence in Education, Innovation in Research, Leadership in Technology.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm text-blue-200">
+                        <li><a href="#" class="hover:text-white transition-colors">Dashboard</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Faculty Directory</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Course Catalog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Library Resources</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2 text-sm text-blue-200">
+                        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact Admin</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Feature Requests</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">System Status</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <div class="space-y-2 text-sm text-blue-200">
+                        <p>Ogbomoso, Oyo State, Nigeria</p>
+                        <p>Phone: +234 (0) 803 xxx xxxx</p>
+                        <p>Email: info@lautech.edu.ng</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-blue-800 mt-8 pt-8 text-center">
+                <p class="text-blue-200 text-sm">&copy; 2024 Ladoke Akintola University of Technology. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (function() {
+            // Initialize app functionality
+            const initializeApp = () => {
+                console.log('LAUTECH Academic Portal initialized');
+                
+                // TODO: Initialize real-time chat functionality
+                // TODO: Set up user authentication with Replit Auth
+                // TODO: Connect to PostgreSQL database
+                // TODO: Initialize file upload system
+                // TODO: Set up WebSocket connections for real-time features
+            };
+
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeApp);
+            } else {
+                initializeApp();
+            }
+        })();
+    </script>
+</body>
+</html>

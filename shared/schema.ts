@@ -133,6 +133,93 @@ export const siteSettings = pgTable("site_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Motivation quotes table
+export const motivationQuotes = pgTable("motivation_quotes", {
+  id: serial("id").primaryKey(),
+  quote: text("quote").notNull(),
+  author: varchar("author").notNull(),
+  category: varchar("category").default("general"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Private messages table
+export const privateMessages = pgTable("private_messages", {
+  id: serial("id").primaryKey(),
+  senderId: varchar("sender_id").references(() => users.id).notNull(),
+  receiverId: varchar("receiver_id").references(() => users.id).notNull(),
+  subject: varchar("subject"),
+  content: text("content").notNull(),
+  isRead: boolean("is_read").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Event comments table
+export const eventComments = pgTable("event_comments", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id).notNull(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Quiz system tables
+export const quizzes = pgTable("quizzes", {
+  id: serial("id").primaryKey(),
+  title: varchar("title").notNull(),
+  description: text("description"),
+  createdById: varchar("created_by_id").references(() => users.id).notNull(),
+  timeLimit: integer("time_limit"), // in minutes
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const quizQuestions = pgTable("quiz_questions", {
+  id: serial("id").primaryKey(),
+  quizId: integer("quiz_id").references(() => quizzes.id).notNull(),
+  question: text("question").notNull(),
+  optionA: varchar("option_a").notNull(),
+  optionB: varchar("option_b").notNull(),
+  optionC: varchar("option_c"),
+  optionD: varchar("option_d"),
+  correctAnswer: varchar("correct_answer").notNull(), // A, B, C, or D
+  points: integer("points").default(1),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const quizAttempts = pgTable("quiz_attempts", {
+  id: serial("id").primaryKey(),
+  quizId: integer("quiz_id").references(() => quizzes.id).notNull(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  score: integer("score").default(0),
+  totalQuestions: integer("total_questions").notNull(),
+  answers: jsonb("answers"), // Store user answers
+  completedAt: timestamp("completed_at").defaultNow(),
+});
+
+// Contact details table
+export const contactDetails = pgTable("contact_details", {
+  id: serial("id").primaryKey(),
+  type: varchar("type").notNull(), // phone, email, address, office_hours
+  label: varchar("label").notNull(),
+  value: text("value").notNull(),
+  isPublic: boolean("is_public").default(true),
+  order: integer("order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Chat history table for AI conversations
+export const chatHistory = pgTable("chat_history", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  sessionId: varchar("session_id").notNull(),
+  userMessage: text("user_message").notNull(),
+  aiResponse: text("ai_response").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   news: many(news),
@@ -140,14 +227,50 @@ export const usersRelations = relations(users, ({ many }) => ({
   chatMessages: many(chatMessages),
   documents: many(documents),
   reports: many(reports),
+  sentMessages: many(privateMessages, { relationName: "sentMessages" }),
+  receivedMessages: many(privateMessages, { relationName: "receivedMessages" }),
+  eventComments: many(eventComments),
+  quizzes: many(quizzes),
+  quizAttempts: many(quizAttempts),
+  chatHistory: many(chatHistory),
 }));
 
 export const newsRelations = relations(news, ({ one }) => ({
   author: one(users, { fields: [news.authorId], references: [users.id] }),
 }));
 
-export const eventsRelations = relations(events, ({ one }) => ({
+export const eventsRelations = relations(events, ({ one, many }) => ({
   organizer: one(users, { fields: [events.organizerId], references: [users.id] }),
+  comments: many(eventComments),
+}));
+
+export const privateMessagesRelations = relations(privateMessages, ({ one }) => ({
+  sender: one(users, { fields: [privateMessages.senderId], references: [users.id], relationName: "sentMessages" }),
+  receiver: one(users, { fields: [privateMessages.receiverId], references: [users.id], relationName: "receivedMessages" }),
+}));
+
+export const eventCommentsRelations = relations(eventComments, ({ one }) => ({
+  event: one(events, { fields: [eventComments.eventId], references: [events.id] }),
+  user: one(users, { fields: [eventComments.userId], references: [users.id] }),
+}));
+
+export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
+  createdBy: one(users, { fields: [quizzes.createdById], references: [users.id] }),
+  questions: many(quizQuestions),
+  attempts: many(quizAttempts),
+}));
+
+export const quizQuestionsRelations = relations(quizQuestions, ({ one }) => ({
+  quiz: one(quizzes, { fields: [quizQuestions.quizId], references: [quizzes.id] }),
+}));
+
+export const quizAttemptsRelations = relations(quizAttempts, ({ one }) => ({
+  quiz: one(quizzes, { fields: [quizAttempts.quizId], references: [quizzes.id] }),
+  user: one(users, { fields: [quizAttempts.userId], references: [users.id] }),
+}));
+
+export const chatHistoryRelations = relations(chatHistory, ({ one }) => ({
+  user: one(users, { fields: [chatHistory.userId], references: [users.id] }),
 }));
 
 export const chatChannelsRelations = relations(chatChannels, ({ many, one }) => ({
@@ -187,6 +310,22 @@ export type Report = typeof reports.$inferSelect;
 export type InsertReport = typeof reports.$inferInsert;
 export type SiteSettings = typeof siteSettings.$inferSelect;
 export type InsertSiteSettings = typeof siteSettings.$inferInsert;
+export type MotivationQuote = typeof motivationQuotes.$inferSelect;
+export type InsertMotivationQuote = typeof motivationQuotes.$inferInsert;
+export type PrivateMessage = typeof privateMessages.$inferSelect;
+export type InsertPrivateMessage = typeof privateMessages.$inferInsert;
+export type EventComment = typeof eventComments.$inferSelect;
+export type InsertEventComment = typeof eventComments.$inferInsert;
+export type Quiz = typeof quizzes.$inferSelect;
+export type InsertQuiz = typeof quizzes.$inferInsert;
+export type QuizQuestion = typeof quizQuestions.$inferSelect;
+export type InsertQuizQuestion = typeof quizQuestions.$inferInsert;
+export type QuizAttempt = typeof quizAttempts.$inferSelect;
+export type InsertQuizAttempt = typeof quizAttempts.$inferInsert;
+export type ContactDetail = typeof contactDetails.$inferSelect;
+export type InsertContactDetail = typeof contactDetails.$inferInsert;
+export type ChatHistoryEntry = typeof chatHistory.$inferSelect;
+export type InsertChatHistoryEntry = typeof chatHistory.$inferInsert;
 
 // Validation schemas
 export const insertUserSchema = createInsertSchema(users).omit({
@@ -232,4 +371,46 @@ export const insertReportSchema = createInsertSchema(reports).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+});
+
+export const insertMotivationQuoteSchema = createInsertSchema(motivationQuotes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertPrivateMessageSchema = createInsertSchema(privateMessages).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertEventCommentSchema = createInsertSchema(eventComments).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertQuizSchema = createInsertSchema(quizzes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertQuizQuestionSchema = createInsertSchema(quizQuestions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertQuizAttemptSchema = createInsertSchema(quizAttempts).omit({
+  id: true,
+  completedAt: true,
+});
+
+export const insertContactDetailSchema = createInsertSchema(contactDetails).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertChatHistorySchema = createInsertSchema(chatHistory).omit({
+  id: true,
+  createdAt: true,
 });
