@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getQueryFn } from "@/lib/queryClient";
 
 export function useAuth() {
   const { data: user, isLoading } = useQuery({
     queryKey: ["/api/user"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    queryFn: () => fetch('/api/user', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : null)
+      .catch(() => null),
     retry: false,
   });
 
