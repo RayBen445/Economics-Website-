@@ -75,7 +75,20 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const PORT = process.env.PORT || 3001;
-  server.listen(Number(PORT), "0.0.0.0", () => {
-    log(`serving on port ${PORT}`);
-  });
+  server.listen(Number(PORT), "0.0.0.0")
+    .on('listening', () => {
+      log(`serving on port ${PORT}`);
+    })
+    .on('error', (err: any) => {
+      if (err.code === 'EADDRINUSE') {
+        log(`Port ${PORT} is busy, trying next available port...`);
+        server.listen(0, "0.0.0.0", () => {
+          const address = server.address();
+          const actualPort = typeof address === 'object' && address ? address.port : PORT;
+          log(`serving on port ${actualPort}`);
+        });
+      } else {
+        throw err;
+      }
+    });
 })();
