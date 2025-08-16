@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { db } from "./db";
 import { sql } from "drizzle-orm";
+import { initializeMainAdmin } from "./initAdmin";
 
 const app = express();
 app.use(express.json());
@@ -43,6 +44,9 @@ app.use((req, res, next) => {
   try {
     await db.execute(sql`SELECT 1 as test`);
     log('Database connection successful');
+    
+    // Initialize main admin
+    await initializeMainAdmin();
   } catch (error) {
     log('Database connection failed:', error);
   }
@@ -71,11 +75,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const PORT = process.env.PORT || 3001;
-  server.listen({
-    port: PORT,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  server.listen(Number(PORT), "0.0.0.0", () => {
     log(`serving on port ${PORT}`);
   });
 })();
