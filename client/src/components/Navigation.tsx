@@ -23,7 +23,7 @@ import {
   Shield,
   LogOut
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "wouter";
 
 export default function Navigation() {
   const { user } = useAuth();
@@ -44,7 +44,7 @@ export default function Navigation() {
               </div>
               <div className="ml-3">
                 <h1 className="text-xl font-bold text-gray-900">
-                  {siteSettings?.siteName || "LAUTECH Portal"}
+                  {(siteSettings as any)?.siteName || "LAUTECH Portal"}
                 </h1>
                 <p className="text-xs text-gray-600">Academic Management System</p>
               </div>
