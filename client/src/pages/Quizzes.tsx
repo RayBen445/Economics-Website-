@@ -9,6 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+
+interface User {
+  id: string;
+  email: string;
+  isAdmin?: boolean;
+}
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { BookOpen, Clock, Trophy, Plus, Eye, Users } from "lucide-react";
 
@@ -30,7 +36,7 @@ export default function Quizzes() {
 
   const { data: quizzes, isLoading } = useQuery<Quiz[]>({
     queryKey: ["/api/quizzes"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
   const createQuizMutation = useMutation({
@@ -92,7 +98,7 @@ export default function Quizzes() {
             <p className="text-gray-600 mt-1">Test your knowledge with interactive quizzes</p>
           </div>
           
-          {user?.isAdmin && (
+          {(user as User)?.isAdmin && (
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-lautech-blue hover:bg-lautech-blue/90" data-testid="button-create-quiz">
@@ -260,7 +266,7 @@ export default function Quizzes() {
                   ? "Create your first quiz to get started" 
                   : "Check back later for new quizzes"}
               </p>
-              {user?.isAdmin && (
+              {(user as User)?.isAdmin && (
                 <Button
                   onClick={() => setIsCreateDialogOpen(true)}
                   className="bg-lautech-blue hover:bg-lautech-blue/90"

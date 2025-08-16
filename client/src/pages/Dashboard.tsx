@@ -7,27 +7,65 @@ import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { Bell, BookOpen, Calendar, MessageSquare, Users, Settings, TrendingUp, GraduationCap, Bot, FileText, Trophy, Shield } from "lucide-react";
 
+interface User {
+  id: string;
+  email: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  isAdmin?: boolean;
+  adminLevel?: number;
+  isBanned?: boolean;
+}
+
+interface NewsItem {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+}
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  location?: string;
+}
+
+interface FacultyMember {
+  id: string;
+  name: string;
+  department: string;
+  email: string;
+}
+
+interface Quiz {
+  id: string;
+  title: string;
+  isActive: boolean;
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
 
-  const { data: news = [], isLoading: newsLoading } = useQuery({
+  const { data: news = [], isLoading: newsLoading } = useQuery<NewsItem[]>({
     queryKey: ["/api/news"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
-  const { data: events = [], isLoading: eventsLoading } = useQuery({
+  const { data: events = [], isLoading: eventsLoading } = useQuery<Event[]>({
     queryKey: ["/api/events"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
-  const { data: faculty = [], isLoading: facultyLoading } = useQuery({
+  const { data: faculty = [], isLoading: facultyLoading } = useQuery<FacultyMember[]>({
     queryKey: ["/api/faculty"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
-  const { data: quizzes = [], isLoading: quizzesLoading } = useQuery({
+  const { data: quizzes = [], isLoading: quizzesLoading } = useQuery<Quiz[]>({
     queryKey: ["/api/quizzes"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
   const recentNews = news.slice(0, 3);
@@ -53,11 +91,11 @@ export default function Dashboard() {
             
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-700">Welcome, {user?.firstName || user?.username}</span>
-                {user?.isAdmin && (
+                <span className="text-sm text-gray-700">Welcome, {(user as User)?.firstName || (user as User)?.username || 'User'}</span>
+                {(user as User)?.isAdmin && (
                   <Badge variant="default" className="bg-lautech-blue">
                     <Shield className="h-3 w-3 mr-1" />
-                    Admin {user.adminLevel && user.adminLevel > 1 ? `L${user.adminLevel}` : ''}
+                    Admin {(user as User)?.adminLevel && (user as User)?.adminLevel! > 1 ? `L${(user as User)?.adminLevel}` : ''}
                   </Badge>
                 )}
               </div>
@@ -175,7 +213,7 @@ export default function Dashboard() {
                 </div>
               ) : recentNews.length > 0 ? (
                 <div className="space-y-4">
-                  {recentNews.map((item: any) => (
+                  {recentNews.map((item) => (
                     <div key={item.id} className="border-l-4 border-lautech-blue pl-4">
                       <h4 className="font-semibold text-gray-900">{item.title}</h4>
                       <p className="text-sm text-gray-600 mt-1">{item.content.substring(0, 100)}...</p>
@@ -211,7 +249,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Active Quizzes</span>
-                  <span className="font-semibold">{quizzes.filter((q: any) => q.isActive).length}</span>
+                  <span className="font-semibold">{quizzes.filter((q) => q.isActive).length}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Upcoming Events</span>
@@ -251,7 +289,7 @@ export default function Dashboard() {
                   </div>
                 ) : upcomingEvents.length > 0 ? (
                   <div className="space-y-3">
-                    {upcomingEvents.map((event: any) => (
+                    {upcomingEvents.map((event) => (
                       <div key={event.id} className="bg-gray-50 rounded-lg p-3">
                         <h5 className="font-medium text-sm text-gray-900">{event.title}</h5>
                         <p className="text-xs text-gray-600 mt-1">
@@ -300,7 +338,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {user?.isAdmin && (
+          {(user as User)?.isAdmin && (
             <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
               <CardContent className="p-6 text-center">
                 <Shield className="h-10 w-10 text-red-600 mx-auto mb-3" />
