@@ -292,7 +292,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUser(userId);
       
       // Only super admin (level 2) can promote others
-      if (!user?.isAdmin || user.adminLevel < 2) {
+      if (!user?.isAdmin || (user.adminLevel !== null && user.adminLevel < 2)) {
         return res.status(403).json({ message: "Super admin access required" });
       }
       
@@ -355,7 +355,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       
-      if (!user?.isAdmin || user.adminLevel < 2) {
+      if (!user?.isAdmin || (user.adminLevel !== null && user.adminLevel < 2)) {
         return res.status(403).json({ message: "Super admin access required" });
       }
       
